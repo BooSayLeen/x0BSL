@@ -270,7 +270,8 @@
   }
   function nextStageBtn() {
     const nx = STAGES[S.stage + 1];
-    return nx ? `<div class="nextstage"><button class="btn big" data-act="go" data-i="${S.stage + 1}">Next: ${esc(nx.short)} →</button></div>` : '';
+    const sc = S.teams.length && S.stage > 0 ? `<button class="btn big" data-act="board" data-v="scores">📊 Show scores</button>` : '';
+    return nx ? `<div class="nextstage">${sc}<button class="btn big" data-act="go" data-i="${S.stage + 1}">Next: ${esc(nx.short)} →</button></div>` : '';
   }
   function peek(key) { return !!S.peek[key]; }
 
@@ -304,6 +305,7 @@
               <div class="team-h"><i>${esc(t.sym)}</i><input class="tname" data-team="${t.id}" value="${esc(t.name)}" aria-label="Team name"></div>
               <ul>${t.members.map((m, mi) => `<li>${esc(m)}<button class="mv" data-act="move" data-team="${t.id}" data-m="${mi}" title="Move to next team">→</button></li>`).join('')}</ul>
             </div>`).join('')}</div>
+          <div class="actions"><button class="btn big" data-act="board" data-v="teams">📺 Show teams on the board</button></div>
           <button class="btn big go" data-act="go" data-i="1">Start the game ▶</button>`
           : `<div class="empty">Teams appear here.<br>Every team is named after a punctuation mark.</div>`}
         </div>
@@ -321,7 +323,8 @@
             <li>Tape the <b>. ? ! , ’</b> cards on the front wall (far from the teams).</li>
             <li>Pin one <b>dictation text</b> per team on the back wall / corridor.</li>
             <li>Paper or mini-whiteboards + markers for each team. Big poster paper + tape.</li>
-            <li>Project this page, or run it from your phone. Keys: <kbd>←</kbd><kbd>→</kbd> items · <kbd>R</kbd> reveal · <kbd>T</kbd> timer · <kbd>F</kbd> full screen. On a phone: swipe ← → to change questions.</li>
+            <li>Show this page on the digital board. Students don't need devices: they watch the board.</li>
+            <li>Keys: <kbd>←</kbd><kbd>→</kbd> items · <kbd>R</kbd> reveal · <kbd>T</kbd> timer · <kbd>S</kbd> scores · <kbd>G</kbd> teams · <kbd>F</kbd> full screen. On a touch board: swipe ← → to change questions.</li>
           </ul>
         </div>
       </div>`;
@@ -657,9 +660,7 @@
   /* ----- Awards */
   V.awards = function () {
     if (!S.teams.length) return needTeams();
-    const ranked = S.teams.map(t => ({ t, s: score(t.id) })).sort((a, b) => b.s - a.s);
-    let rank = 0, last = null;
-    ranked.forEach((r, i) => { if (r.s !== last) { rank = i + 1; last = r.s; } r.rank = rank; });
+    const ranked = ranking();
     const podium = [ranked[1], ranked[0], ranked[2]].filter(Boolean);
     const max = Math.max(1, ranked[0].s);
     const { rows, eye } = results();
@@ -683,6 +684,38 @@
     </div>`;
   };
 
+  /* ------------------------------------------------------------------ board views (full screen, for students) */
+  let boardView = null; // 'teams' | 'scores' | null
+  function ranking() {
+    const ranked = S.teams.map(t => ({ t, s: score(t.id) })).sort((a, b) => b.s - a.s);
+    let rank = 0, last = null;
+    ranked.forEach((r, i) => { if (r.s !== last) { rank = i + 1; last = r.s; } r.rank = rank; });
+    return ranked;
+  }
+  function boardHtml() {
+    if (!S.teams.length) return `<div class="bv-inner"><h1>No teams yet</h1><p class="bv-hint">Make teams on the Teams page first.</p></div>`;
+    if (boardView === 'teams') {
+      return `<div class="bv-inner"><h1>👥 Find your team</h1>
+        <div class="tb-grid n${S.teams.length}">${S.teams.map(t => `<div class="tb" style="--c:${t.color}">
+          <div class="tb-h"><i>${esc(t.sym)}</i><b>${esc(t.name)}</b></div>
+          <ul>${t.members.map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`).join('')}</div>
+        <p class="bv-hint">Tap anywhere to close</p></div>`;
+    }
+    const ranked = ranking(), max = Math.max(1, ranked[0].s);
+    const medal = r => r.s > 0 && r.rank <= 3 ? ['🥇', '🥈', '🥉'][r.rank - 1] : r.rank;
+    return `<div class="bv-inner"><h1>📊 Scores <small>after ${esc(stage().short)}</small></h1>
+      <div class="lb">${ranked.map((r, i) => `<div class="lb-row" style="--c:${r.t.color}; --w:${(r.s / max) * 100}%; --d:${i * 90}ms">
+        <span class="lb-rank">${medal(r)}</span><i>${esc(r.t.sym)}</i>
+        <div class="lb-main"><b>${esc(r.t.name)}</b><small>${r.t.members.map(esc).join(' · ')}</small><div class="lb-bar"><span></span></div></div>
+        <span class="lb-score">${r.s}</span></div>`).join('')}</div>
+      <p class="bv-hint">Tap anywhere to close</p></div>`;
+  }
+  function drawBoard() {
+    const el = $('#boardview');
+    el.classList.toggle('on', !!boardView);
+    if (boardView) el.innerHTML = boardHtml();
+  }
+
   /* ------------------------------------------------------------------ render */
   let prevScores = {};
   let scOpen = null; // phone: which scoreboard chip shows its + / − buttons
@@ -702,6 +735,7 @@
     main.innerHTML = html + nextStageBtn();
     main.className = 'st-' + st.id;
     renderScores();
+    drawBoard();
     save();
   }
   function renderScores() {
@@ -846,6 +880,8 @@
       sfx.fanfare(); flash('Points added! 🎉');
     },
     scOpen(d) { scOpen = scOpen === d.team ? null : d.team; renderScores(); return false; },
+    board(d) { boardView = d.v; closeModal(); $('.top').classList.remove('more-open'); if (d.v === 'scores') sfx.reveal(); },
+    closeBoard() { boardView = null; },
     celebrate() { confetti(); sfx.fanfare(); return false; },
     tToggle() { T.running ? timerPause() : timerStart(); return false; },
     tReset() { timerSet(T.total, { label: T.label, every: T.every, everyText: T.everyText }); return false; },
@@ -906,8 +942,9 @@
     else if (k === 'arrowleft') { A.prev(); render(); }
     else if (k === 'r' || k === ' ') { if (A.reveal() !== false) render(); else if (k === ' ') A.tToggle(); }
     else if (k === 't') A.tToggle();
+    else if (k === 's' || k === 'g') { const v = k === 's' ? 'scores' : 'teams'; boardView = boardView === v ? null : v; drawBoard(); }
     else if (k === 'f') A.fullscreen();
-    else if (k === 'escape') { closeModal(); $('#bigtimer').classList.remove('on'); }
+    else if (k === 'escape') { closeModal(); $('#bigtimer').classList.remove('on'); boardView = null; drawBoard(); }
     else handled = false;
     if (handled) e.preventDefault();
   });

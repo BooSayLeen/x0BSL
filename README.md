@@ -1,6 +1,6 @@
 # Write It Right! — A Day in the Life
 
-A whole-lesson (60 min) classroom game for beginner adult learners. The teacher runs it from a projector, laptop, tablet or phone (iOS and Android).
+A whole-lesson (60 min) classroom game for beginner adult learners. It is **teacher-led**: the teacher runs it on the digital board (or a projector), and students watch the board. Students don't need phones or devices.
 Students move around the room, write in teams and judge each other's paragraphs.
 
 **Focus:** writing sentences · simple paragraphs · capital letters · punctuation (`. ? ! , '`)
@@ -27,8 +27,10 @@ stars are close to the teacher's earn **Sharp-Eye** bonus points, so teams are r
 
 - Open the page and type your students' names, choose a grouping, then press **Make random teams**.
 - 🖨 **Printables:** corner signs, punctuation cards, dictation texts, paragraph planners, judging sheets, rules handout.
-- Keys: `←` `→` change item · `R` reveal the answer · `T` start/pause the timer · `F` full screen.
-- On a phone: swipe ← → to change questions; the ⋯ button holds Rules, Print, Sound, Theme and New game. Use *Add to Home Screen* to open it like an app.
+- **👥 Teams** and **📊 Scores** show a full-screen view on the board: who is in each team, and the live ranking with bars. A **📊 Show scores** button also appears at the end of each round.
+- Keys: `←` `→` change item · `R` reveal the answer · `T` start/pause the timer · `S` scores · `G` teams · `F` full screen.
+- On a touch board: tap the buttons and swipe ← → to change questions. Text gets bigger on large (1920px+) boards.
+- It also works on a phone or tablet if the teacher needs it (the ⋯ button holds the extra tools).
 - Scores save in the browser automatically. Press ⟲ to start a new game.
 - To change the questions or texts, edit `content.js`.
 

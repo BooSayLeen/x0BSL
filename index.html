@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Write It Right!</title>
+  <meta name="description" content="A whole-lesson classroom writing game: sentences, simple paragraphs, capital letters and punctuation — present simple and daily routines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand" title="Write It Right!">
+      <span class="logo">Aa.</span>
+      <span class="brand-txt">Write It Right!<small>A Day in the Life</small></span>
+    </div>
+    <nav id="stepper" class="stepper" aria-label="Game stages"></nav>
+    <div class="tools">
+      <div class="timer" id="timer">
+        <button class="t-disp" id="t-disp" data-act="bigtimer" title="Show big timer">05:00</button>
+        <button class="ic" data-act="tToggle" id="t-toggle" title="Start / pause (T)">▶</button>
+        <button class="ic" data-act="tReset" title="Reset timer">↺</button>
+        <select id="t-preset" title="Timer length" aria-label="Timer length">
+          <option value="30">0:30</option><option value="60">1 min</option><option value="120">2 min</option>
+          <option value="180">3 min</option><option value="300" selected>5 min</option><option value="480">8 min</option>
+          <option value="600">10 min</option><option value="720">12 min</option><option value="900">15 min</option>
+        </select>
+      </div>
+      <button class="ic" data-act="rules" title="Rules reference">📘</button>
+      <button class="ic" data-act="print" title="Printables">🖨</button>
+      <button class="ic" data-act="sound" id="b-sound" title="Sound on/off">🔊</button>
+      <button class="ic" data-act="theme" title="Light / dark">◐</button>
+      <button class="ic" data-act="fullscreen" title="Full screen (F)">⛶</button>
+      <button class="ic" data-act="resetAll" title="New game">⟲</button>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <footer id="scoreboard" class="scoreboard" aria-label="Scoreboard"></footer>
+
+  <div id="flash" class="flash" aria-live="assertive"></div>
+  <div id="bigtimer" class="bigtimer" data-act="bigtimer"></div>
+  <div id="modal" class="modal"></div>
+  <div id="print-area"></div>
+
+  <noscript><p style="padding:2rem">This game needs JavaScript.</p></noscript>
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

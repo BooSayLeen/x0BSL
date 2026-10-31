@@ -23,18 +23,18 @@
   ];
 
   const STAGES = [
-    { id: 'setup', short: 'Teams', title: 'Set up the teams', mins: 5 },
-    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Four corners', mins: 12,
+    { id: 'setup', short: 'Teams', title: 'Set up the teams', mins: 3 },
+    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Four corners', mins: 7, aim: '6 questions',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Run & swat', mins: 12,
+    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Walk & swat', mins: 7, aim: '8 sentences',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r3', short: 'Sentence Scramble', title: 'Sentence Scramble', n: 3, skill: 'Present simple sentences', move: 'Relay to the judge', mins: 12,
+    { id: 'r3', short: 'Sentence Scramble', title: 'Sentence Scramble', n: 3, skill: 'Present simple sentences', move: 'Relay to the judge', mins: 7, aim: '5 sentences',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r4', short: 'Running Dictation', title: 'Running Dictation', n: 4, skill: 'Accurate writing', move: 'Run, read, remember', mins: 12,
+    { id: 'r4', short: 'Running Dictation', title: 'Running Dictation', n: 4, skill: 'Accurate writing', move: 'Walk, read, remember', mins: 8,
       tabs: [['how', 'How to play'], ['play', 'Play'], ['check', 'Check']] },
-    { id: 'r5', short: 'Paragraph Builder', title: 'Paragraph Builder', n: 5, skill: 'Simple paragraphs', move: 'Poster on the wall', mins: 18,
+    { id: 'r5', short: 'Paragraph Builder', title: 'Paragraph Builder', n: 5, skill: 'Simple paragraphs', move: 'Poster on the wall', mins: 13,
       tabs: [['learn', 'Learn'], ['topics', 'Topics'], ['write', 'Write']] },
-    { id: 'r6', short: "Judges' Walk", title: "Judges' Walk", n: 6, skill: 'Peer judging', move: 'Gallery walk', mins: 15,
+    { id: 'r6', short: "Judges' Walk", title: "Judges' Walk", n: 6, skill: 'Peer judging', move: 'Gallery walk', mins: 11,
       tabs: [['how', 'How to judge'], ['walk', 'Walk'], ['scores', 'Enter scores'], ['results', 'Results']] },
     { id: 'awards', short: 'Awards', title: 'Awards', mins: 4 }
   ];
@@ -89,6 +89,7 @@
     if (!S.sound) return;
     try {
       ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
       const t0 = ac.currentTime + (when || 0);
       const o = ac.createOscillator(), g = ac.createGain();
       o.type = type || 'sine'; o.frequency.value = freq;
@@ -256,7 +257,7 @@
     return `<div class="rhead">
       <div class="rnum">Round ${s.n}</div>
       <h1>${esc(s.title)}</h1>
-      <div class="tags"><span class="tag skill">✏️ ${esc(s.skill)}</span><span class="tag move">🏃 ${esc(s.move)}</span><span class="tag time">⏱ ~${s.mins} min</span></div>
+      <div class="tags"><span class="tag skill">✏️ ${esc(s.skill)}</span><span class="tag move">🏃 ${esc(s.move)}</span><span class="tag time">⏱ ~${s.mins} min${s.aim ? ' · ' + esc(s.aim) : ''}</span></div>
       <div class="tabs">${s.tabs.map(([id, lab], i) => `<button class="tab ${r.tab === id ? 'on' : ''}" data-act="tab" data-tab="${id}"><span>${i + 1}</span>${esc(lab)}</button>`).join('')}</div>
     </div>`;
   }
@@ -320,7 +321,7 @@
             <li>Tape the <b>. ? ! , ’</b> cards on the front wall (far from the teams).</li>
             <li>Pin one <b>dictation text</b> per team on the back wall / corridor.</li>
             <li>Paper or mini-whiteboards + markers for each team. Big poster paper + tape.</li>
-            <li>Project this page. Keys: <kbd>←</kbd><kbd>→</kbd> items · <kbd>R</kbd> reveal · <kbd>T</kbd> timer · <kbd>F</kbd> full screen.</li>
+            <li>Project this page, or run it from your phone. Keys: <kbd>←</kbd><kbd>→</kbd> items · <kbd>R</kbd> reveal · <kbd>T</kbd> timer · <kbd>F</kbd> full screen. On a phone: swipe ← → to change questions.</li>
           </ul>
         </div>
       </div>`;
@@ -383,10 +384,10 @@
       return `<div class="how"><ol class="steps">
         <li>Each team stands in a line at the <b>back</b> of the room.</li>
         <li>The screen shows a sentence with a <b>gap</b>.</li>
-        <li>The <b>first person</b> in each line runs to the wall and <b>swats</b> (touches) the right card: <b>. ? ! , ’</b></li>
+        <li>The <b>first person</b> in each line walks quickly to the wall and <b>swats</b> (touches) the right card: <b>. ? ! , ’</b></li>
         <li>First correct swat = <b>+2</b>. Other correct swats = <b>+1</b>.</li>
-        <li>Runners go to the <b>end</b> of their line. Everybody runs!</li>
-      </ol><p class="tip">💡 Safety: walk fast, don't push. A hand on the card = your answer.</p></div>`;
+        <li>Runners go to the <b>end</b> of their line. Everybody gets a turn!</li>
+      </ol><p class="tip">💡 Safety: walk — no running, no pushing. A hand on the card = your answer.</p></div>`;
     },
     play() {
       const r = S.rounds.r2, q = C.swat[r.i], rev = !!r.rev[r.i];
@@ -426,7 +427,7 @@
       return `<div class="how"><ol class="steps">
         <li>The screen shows <b>mixed-up words</b> (no capitals, no punctuation).</li>
         <li>Your team writes the <b>correct sentence</b> on paper — with <b>capital letters</b> and <b>punctuation</b>.</li>
-        <li>A <b>runner</b> brings it to the teacher (the judge). Change runner every time!</li>
+        <li>A <b>runner</b> walks it to the teacher (the judge). Change runner every time!</li>
         <li>Points: <b>+1</b> word order · <b>+1</b> capitals · <b>+1</b> punctuation. First correct team: <b>+1 bonus</b>.</li>
       </ol><p class="tip">💡 Watch the verb: he / she + <b>s</b> (gets, goes, studies).</p></div>`;
     },
@@ -473,8 +474,8 @@
         <div class="bigtitle">🏃 ${esc(d.title)}</div>
         <p class="lead">Runners: go to the wall! Writers: get ready to write.</p>
         <div class="actions">
-          <button class="btn big primary" data-act="cue" data-sec="480" data-label="STOP WRITING!" data-every="120" data-every-text="SWAP ROLES!">⏱ Start 8 min · SWAP every 2 min</button>
-          <button class="btn big" data-act="cue" data-sec="600" data-label="STOP WRITING!" data-every="120" data-every-text="SWAP ROLES!">⏱ 10 min</button>
+          <button class="btn big primary" data-act="cue" data-sec="360" data-label="STOP WRITING!" data-every="120" data-every-text="SWAP ROLES!">⏱ Start 6 min · SWAP every 2 min</button>
+          <button class="btn big" data-act="cue" data-sec="480" data-label="STOP WRITING!" data-every="120" data-every-text="SWAP ROLES!">⏱ 8 min</button>
         </div>
         <p class="muted">The text is NOT on the screen. It shows in the next tab (Check).</p></div>`;
     },
@@ -537,15 +538,15 @@
       return `<div class="lesson"><div class="grid2">
         <div><h2>Write your team paragraph</h2>
           <ol class="steps small">
-            <li><b>Plan</b> on the planner sheet (3 min).</li>
-            <li><b>Write</b> on the poster. Big, clear letters. Team name at the top (12 min).</li>
-            <li><b>Check</b> with the checklist. Fix mistakes (3 min).</li>
+            <li><b>Plan</b> on the planner sheet (2 min).</li>
+            <li><b>Write</b> on the poster. Big, clear letters. Team name at the top (8 min).</li>
+            <li><b>Check</b> with the checklist. Fix mistakes (2 min).</li>
             <li><b>Stick</b> your poster on the wall.</li>
           </ol>
           <div class="actions left">
-            <button class="btn" data-act="cue" data-sec="180" data-label="START WRITING!">⏱ Plan 3′</button>
-            <button class="btn primary" data-act="cue" data-sec="720" data-label="STOP — CHECK!">⏱ Write 12′</button>
-            <button class="btn" data-act="cue" data-sec="180" data-label="POSTERS ON THE WALL!">⏱ Check 3′</button>
+            <button class="btn" data-act="cue" data-sec="120" data-label="START WRITING!">⏱ Plan 2′</button>
+            <button class="btn primary" data-act="cue" data-sec="480" data-label="STOP — CHECK!">⏱ Write 8′</button>
+            <button class="btn" data-act="cue" data-sec="120" data-label="POSTERS ON THE WALL!">⏱ Check 2′</button>
           </div>
           <h2>⭐ Bonus missions</h2>
           <ul class="missions">${C.missions.map(m => `<li>${esc(m)}</li>`).join('')}</ul>
@@ -609,8 +610,8 @@
           return `<div class="rot">${tchip(t)}<span class="arrow">→ judges →</span><span class="poster" style="--c:${tgt.color}">📄 ${esc(tgt.name)}'s poster</span></div>`;
         }).join('')}</div>
         <div class="actions">
-          <button class="btn primary big" data-act="cue" data-sec="180" data-label="ROTATE! →">⏱ 3 min per poster</button>
-          <button class="btn" data-act="cue" data-sec="120" data-label="ROTATE! →">⏱ 2 min</button>
+          <button class="btn primary big" data-act="cue" data-sec="120" data-label="ROTATE! →">⏱ 2 min per poster</button>
+          <button class="btn" data-act="cue" data-sec="90" data-label="ROTATE! →">⏱ 90 s</button>
           ${rot < n - 1 ? `<button class="btn" data-act="rot" data-i="${rot + 1}">Next rotation →</button>` : `<button class="btn" data-act="tab" data-tab="scores">Enter scores →</button>`}
         </div></div>`;
     },
@@ -684,6 +685,7 @@
 
   /* ------------------------------------------------------------------ render */
   let prevScores = {};
+  let scOpen = null; // phone: which scoreboard chip shows its + / − buttons
   function render() {
     const st = stage();
     document.documentElement.dataset.theme = S.theme;
@@ -708,7 +710,7 @@
     const top = Math.max(...S.teams.map(t => score(t.id)));
     sb.innerHTML = S.teams.map(t => {
       const s = score(t.id), bump = prevScores[t.id] != null && prevScores[t.id] !== s;
-      return `<div class="sc ${bump ? 'bump' : ''}" style="--c:${t.color}">
+      return `<div class="sc ${bump ? 'bump' : ''} ${scOpen === t.id ? 'open' : ''}" style="--c:${t.color}" data-act="scOpen" data-team="${t.id}" title="Tap for + / −">
         <i>${esc(t.sym)}</i><span class="sn">${top > 0 && s === top ? '👑 ' : ''}${esc(t.name)}</span><b>${s}</b>
         <span class="pm"><button data-act="adj" data-team="${t.id}" data-d="-1" aria-label="minus one">−</button><button data-act="adj" data-team="${t.id}" data-d="1" aria-label="plus one">+</button></span></div>`;
     }).join('');
@@ -843,6 +845,7 @@
       eye.forEach(e => { S.awards['r6:eye'][e.j.id] = e.bonus; });
       sfx.fanfare(); flash('Points added! 🎉');
     },
+    scOpen(d) { scOpen = scOpen === d.team ? null : d.team; renderScores(); return false; },
     celebrate() { confetti(); sfx.fanfare(); return false; },
     tToggle() { T.running ? timerPause() : timerStart(); return false; },
     tReset() { timerSet(T.total, { label: T.label, every: T.every, everyText: T.everyText }); return false; },
@@ -850,10 +853,13 @@
     sound() { S.sound = !S.sound; },
     theme() { S.theme = S.theme === 'dark' ? 'light' : 'dark'; },
     fullscreen() {
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+      const de = document.documentElement;
+      if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      else if (de.requestFullscreen) de.requestFullscreen().catch(() => {});
+      else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
       return false;
     },
+    more() { $('.top').classList.toggle('more-open'); return false; },
     rules() { openModal(`<h2>📘 Rules</h2>${rulesHtml()}`); return false; },
     print() { openModal(printHtml()); return false; },
     closeModal() { closeModal(); return false; },
@@ -878,6 +884,7 @@
     if (!el) { if (e.target.id === 'modal') closeModal(); return; }
     const fn = A[el.dataset.act];
     if (!fn) return;
+    if (el.closest('.more-tools')) $('.top').classList.remove('more-open');
     if (fn(el.dataset, el) !== false) render();
   });
   document.addEventListener('change', e => {
@@ -905,6 +912,38 @@
     if (handled) e.preventDefault();
   });
   window.addEventListener('afterprint', () => { $('#print-area').innerHTML = ''; });
+
+  // Phones: hide full screen where the browser can't do it (iPhone Safari)
+  if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen) $('#b-fs').hidden = true;
+
+  // iOS / Android only allow sound after the first touch: unlock it then
+  const unlock = () => {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+      const b = ac.createBuffer(1, 1, 22050), src = ac.createBufferSource();
+      src.buffer = b; src.connect(ac.destination); src.start(0);
+    } catch (e) { /* no audio */ }
+    window.removeEventListener('touchend', unlock); window.removeEventListener('pointerdown', unlock);
+  };
+  window.addEventListener('touchend', unlock, { passive: true });
+  window.addEventListener('pointerdown', unlock, { passive: true });
+
+  // Swipe left / right on the question to change item (phones and tablets)
+  let sx = null, sy = 0;
+  $('#main').addEventListener('touchstart', e => {
+    if (e.touches.length !== 1 || e.target.closest('input, textarea, select, .tablewrap, .scroll-x')) { sx = null; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, { passive: true });
+  $('#main').addEventListener('touchend', e => {
+    if (sx == null) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    sx = null;
+    const r = S.rounds[stage().id];
+    if (!r || r.tab !== 'play' || Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (dx < 0) A.next(); else A.prev();
+    render();
+  }, { passive: true });
 
   timerSet(300);
   render();

@@ -2,7 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#E4572E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Write It Right">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Write It Right!</title>
   <meta name="description" content="A whole-lesson classroom writing game: sentences, simple paragraphs, capital letters and punctuation — present simple and daily routines.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,19 +30,22 @@
       <div class="timer" id="timer">
         <button class="t-disp" id="t-disp" data-act="bigtimer" title="Show big timer">05:00</button>
         <button class="ic" data-act="tToggle" id="t-toggle" title="Start / pause (T)">▶</button>
-        <button class="ic" data-act="tReset" title="Reset timer">↺</button>
+        <button class="ic t-reset" data-act="tReset" title="Reset timer">↺</button>
         <select id="t-preset" title="Timer length" aria-label="Timer length">
-          <option value="30">0:30</option><option value="60">1 min</option><option value="120">2 min</option>
-          <option value="180">3 min</option><option value="300" selected>5 min</option><option value="480">8 min</option>
+          <option value="30">0:30</option><option value="60">1 min</option><option value="90">1:30</option><option value="120">2 min</option>
+          <option value="180">3 min</option><option value="300" selected>5 min</option><option value="360">6 min</option><option value="480">8 min</option>
           <option value="600">10 min</option><option value="720">12 min</option><option value="900">15 min</option>
         </select>
       </div>
-      <button class="ic" data-act="rules" title="Rules reference">📘</button>
-      <button class="ic" data-act="print" title="Printables">🖨</button>
-      <button class="ic" data-act="sound" id="b-sound" title="Sound on/off">🔊</button>
-      <button class="ic" data-act="theme" title="Light / dark">◐</button>
-      <button class="ic" data-act="fullscreen" title="Full screen (F)">⛶</button>
-      <button class="ic" data-act="resetAll" title="New game">⟲</button>
+      <button class="ic more-btn" data-act="more" title="More" aria-label="More tools">⋯</button>
+      <div class="more-tools">
+        <button class="ic" data-act="rules" title="Rules reference">📘<span>Rules</span></button>
+        <button class="ic" data-act="print" title="Printables">🖨<span>Print</span></button>
+        <button class="ic" data-act="sound" id="b-sound" title="Sound on/off">🔊</button>
+        <button class="ic" data-act="theme" title="Light / dark">◐<span>Theme</span></button>
+        <button class="ic" data-act="fullscreen" id="b-fs" title="Full screen (F)">⛶<span>Full screen</span></button>
+        <button class="ic" data-act="resetAll" title="New game">⟲<span>New game</span></button>
+      </div>
     </div>
   </header>
 

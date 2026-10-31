@@ -17,10 +17,10 @@ window.CONTENT = {
   ],
 
   marks: [
-    { mark: '.', name: 'full stop', use: 'At the end of a normal sentence.', ex: 'I get up at seven.', action: 'Stamp your foot' },
+    { mark: '.', name: 'full stop', use: 'At the end of a normal sentence.', ex: 'I get up at seven.', action: 'Tap the table once' },
     { mark: '?', name: 'question mark', use: 'At the end of a question.', ex: 'What time do you get up?', action: 'Shrug your shoulders' },
-    { mark: '!', name: 'exclamation mark', use: 'For strong feelings: surprise, happy, angry.', ex: 'What a busy day!', action: 'Jump and clap' },
-    { mark: ',', name: 'comma', use: 'Between things in a list (no comma before "and").', ex: 'I wash, cook and clean.', action: 'Click your fingers' },
+    { mark: '!', name: 'exclamation mark', use: 'For strong feelings: surprise, happy, angry.', ex: 'What a busy day!', action: 'Clap once' },
+    { mark: ',', name: 'comma', use: 'Between things in a list (no comma before "and").', ex: 'I wash, cook and clean.', action: 'Raise one hand' },
     { mark: "'", name: 'apostrophe', use: 'Shows missing letters: I\'m = I am, don\'t = do not.', ex: 'She doesn\'t work on Friday.', action: 'Draw it in the air' }
   ],
 

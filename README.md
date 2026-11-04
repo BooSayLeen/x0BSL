@@ -11,17 +11,22 @@ Students move around the room, write in teams and judge each other's paragraphs.
 | # | Round | Skill | Movement | Time |
 |---|-------|-------|----------|------|
 | – | Teams | Pairs, groups of 3 or 4, or any number of teams (handles odd numbers) | – | 3′ |
-| 1 | Capital Corners | Capital letters | Teams walk to corner A/B/C/D | 7′ |
-| 2 | Punctuation Swat | `. ? ! , '` | Students walk quickly to touch the right card on the wall | 7′ |
-| 3 | Sentence Scramble | Present simple sentences | A runner takes the team's sentence to the teacher | 7′ |
-| 4 | Running Dictation | Accurate writing | Runner reads the text on the wall and tells the writer (SWAP every 2′) | 8′ |
-| 5 | Paragraph Builder | Topic, supporting and concluding sentences | Teams write a poster on the wall | 13′ |
-| 6 | Judges' Walk | Peer judging with a 6-point rubric | Gallery walk, rotating clockwise (2′ per poster) | 11′ |
-| 🏆 | Awards | Podium, Best Paragraph, Sharp-Eye Judges, exit ticket | – | 4′ |
+| 1 | Capital Corners | Capital letters | Corners **or** raise your board | 6′ |
+| 2 | Punctuation Swat | `. ? ! , '` | Touch the card on the wall **or** raise your board | 6′ |
+| 3 | Verb Check | Subject–verb agreement (he / she + s) and *Correct or wrong?* | Corners **or** raise your board | 6′ |
+| 4 | Sentence Scramble | Unscramble sentences **and questions** | A runner takes the answer to the teacher | 6′ |
+| 5 | Running Dictation | Accurate writing | Runner reads the text on the wall and tells the writer (SWAP every 2′) | 7′ |
+| 6 | Paragraph Builder | Topic, supporting and concluding sentences | Teams write a poster on the wall | 12′ |
+| 7 | Judges' Walk | Peer judging: 5 checks linked to the rounds | Gallery walk, rotating clockwise (2′ per poster) | 10′ |
+| 🏆 | Awards | Podium, Best Paragraph, Sharp-Eye Judges, prizes, exit ticket | – | 4′ |
 
 Each round has **Learn** (rules + a short warm-up — standing/sitting, clapping and simple gestures, no jumping), **How to play** and **Play** tabs.
-In **Judges' Walk** teams give 0–2 stars on 6 criteria. The teacher can judge too, and teams whose
-stars are close to the teacher's earn **Sharp-Eye** bonus points, so teams are rewarded for judging fairly.
+
+**Answer modes:** in rounds 1–3 choose *Moving to the corners* or *Raising their boards* (mini whiteboards). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!* or *Boards up!*
+
+**Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. For each check they count the mistakes: **no mistakes = 2 stars · 1–2 mistakes = 1 · 3 or more = 0** (max 10). The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
+
+**Prizes:** on the Awards page the winners choose 🍩 Donut, 🍫 Chocolate, 🖊️ Pens or 🗒️ Sticky notes (edit the list in `content.js`).
 
 ## Using it
 

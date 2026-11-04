@@ -100,7 +100,44 @@ window.CONTENT = {
     'I wash, cook and clean.', "I don't like Mondays.", 'Where does she work?'
   ],
 
-  /* ---------- Round 3: Sentence Scramble (words shown lowercase, no punctuation) ---------- */
+  /* ---------- Round 3: Verb Check — subject–verb agreement + Correct or wrong?
+     type 'choose': options → corners A, B, C · answer = index
+     type 'tf': is the sentence correct? ok = true/false · fix = the correct sentence */
+  agreement: [
+    { title: 'Spelling', ex: 'go → <u>goes</u> · watch → <u>watches</u> · study → <u>studies</u> · have → <u>has</u>' },
+    { title: "don't / doesn't + verb", ex: "I <u>don't</u> drive. She <u>doesn't</u> drive. (NOT doesn't drive<b>s</b>)" },
+    { title: 'Do / Does …?', ex: '<u>Do</u> you cook? <u>Does</u> he cook? (NOT Does he cook<b>s</b>?)' },
+    { title: 'Careful!', ex: 'My mother and I = <u>we</u> → cook · My brothers = <u>they</u> → work', no: true }
+  ],
+
+  /* Round 3 warm-up: clap once if the verb needs -s */
+  clapS: [
+    { w: 'my brother ___ (work)', s: true, a: 'works' }, { w: 'they ___ (play)', s: false, a: 'play' },
+    { w: 'Sara ___ (study)', s: true, a: 'studies' }, { w: 'my friends ___ (go)', s: false, a: 'go' },
+    { w: 'the bus ___ (leave)', s: true, a: 'leaves' }, { w: 'you ___ (cook)', s: false, a: 'cook' },
+    { w: 'my mother and I ___ (watch)', s: false, a: 'watch' }, { w: 'he ___ (have)', s: true, a: 'has' }
+  ],
+
+  verbs: [
+    { type: 'choose', text: 'My sister ___ in a bank.', options: ['work', 'works', 'working'], answer: 1, why: 'My sister = she → works.' },
+    { type: 'tf', text: 'They gets up at seven.', ok: false, fix: 'They get up at seven.', why: 'they → no -s.' },
+    { type: 'choose', text: 'I ___ coffee every morning.', options: ['drink', 'drinks', 'drinking'], answer: 0, why: 'I → no -s.' },
+    { type: 'tf', text: 'Omar studies English on Monday.', ok: true, why: 'Omar = he → study → studies.' },
+    { type: 'choose', text: 'He ___ his homework at night.', options: ['do', 'dos', 'does'], answer: 2, why: 'do → does (add -es).' },
+    { type: 'tf', text: "She don't eat meat.", ok: false, fix: "She doesn't eat meat.", why: "she → doesn't." },
+    { type: 'choose', text: '___ your father drive to work?', options: ['Do', 'Does', 'Is'], answer: 1, why: 'your father = he → Does …?' },
+    { type: 'tf', text: 'We watches TV after dinner.', ok: false, fix: 'We watch TV after dinner.', why: 'we → no -s.' },
+    { type: 'choose', text: 'The shop ___ at nine o\'clock.', options: ['open', 'opens', 'opening'], answer: 1, why: 'the shop = it → opens.' },
+    { type: 'tf', text: 'Does he works on Friday?', ok: false, fix: 'Does he work on Friday?', why: 'After does, the verb has no -s.' },
+    { type: 'choose', text: 'My mother and I ___ dinner together.', options: ['cook', 'cooks', 'cooking'], answer: 0, why: 'my mother and I = we → cook.' },
+    { type: 'tf', text: 'Sara has breakfast at seven.', ok: true, why: 'have → has with he / she.' },
+    { type: 'tf', text: 'We go to the gym on monday.', ok: false, fix: 'We go to the gym on Monday.', why: 'Days need a capital: Monday.' },
+    { type: 'tf', text: 'Where does she live.', ok: false, fix: 'Where does she live?', why: 'A question ends with a question mark.' },
+    { type: 'tf', text: 'I have tea, bread and cheese for breakfast.', ok: true, why: 'Commas in the list, capital I, full stop.' },
+    { type: 'choose', text: 'My children ___ to school at eight.', options: ['go', 'goes', 'going'], answer: 0, why: 'my children = they → go.' }
+  ],
+
+  /* ---------- Round 4: Sentence Scramble (sentences + questions) (words shown lowercase, no punctuation) ---------- */
   scramble: [
     { answer: 'My sister gets up at six.', words: 'my sister gets up at six' },
     { answer: 'I go to work on Monday.', words: 'i go to work on monday' },
@@ -111,10 +148,16 @@ window.CONTENT = {
     { answer: 'I have tea, bread and cheese for breakfast.', words: 'i have tea bread and cheese for breakfast' },
     { answer: 'We visit our grandmother every Sunday.', words: 'we visit our grandmother every sunday' },
     { answer: 'What a busy morning!', words: 'what a busy morning' },
-    { answer: 'Sara studies English in the evening.', words: 'sara studies english in the evening' }
+    { answer: 'Sara studies English in the evening.', words: 'sara studies english in the evening' },
+    { answer: 'Where does your brother work?', words: 'where does your brother work' },
+    { answer: 'Do you walk to work every day?', words: 'do you walk to work every day' },
+    { answer: 'What time does the bank open?', words: 'what time does the bank open' },
+    { answer: 'Does Lina visit her mother on Saturday?', words: 'does lina visit her mother on saturday' },
+    { answer: 'How do you go to work?', words: 'how do you go to work' },
+    { answer: 'When does your English lesson start?', words: 'when does your english lesson start' }
   ],
 
-  /* Round 3 warm-up: sentence or not? */
+  /* Round 4 warm-up: sentence or not? */
   sentenceOrNot: [
     { s: 'I get up at seven.', ok: true, why: 'Subject + verb + full stop.' },
     { s: 'every morning at six', ok: false, why: 'No subject and no verb.' },
@@ -124,24 +167,25 @@ window.CONTENT = {
     { s: 'goes to bed at ten', ok: false, why: 'No subject. Who goes to bed?' }
   ],
 
-  /* ---------- Round 4: Running Dictation texts ---------- */
+  /* ---------- Round 5: Running Dictation texts ---------- */
   dictation: [
-    { title: "Omar's Day", level: 'Easy', text: "My name is Omar. I get up at six o'clock. I have tea and bread for breakfast. I go to work by bus. I come home at five. I love my evenings!" },
-    { title: "Lina's Week", level: 'Medium', text: "Lina is a nurse in Dubai. She starts work at seven every morning. She doesn't work on Friday. On Saturday she visits her mother. They cook, eat and talk together. Lina loves Saturdays!" },
-    { title: 'A Busy Morning', level: 'Harder', text: "I'm a teacher. I wake up at half past five. I don't eat breakfast at home. I take the train to Alexandria. My lessons start at eight. What a busy morning!" }
+    { title: "Omar's Day", level: 'Standard', text: "Omar is a taxi driver in Alexandria. He usually gets up at half past five. He has tea, bread and cheese for breakfast. He doesn't work on Fridays. On Saturday he takes his children to the beach. What a lovely day!" },
+    { title: "Lina's Week", level: 'Harder', text: "Lina works as a nurse at a big hospital in Dubai. She starts work at seven o'clock every morning. She never has time for breakfast. She doesn't work on Fridays. On Saturdays she visits her mother, cooks lunch and talks for hours. Does Lina love her job? Yes, she does!" },
+    { title: 'A Teacher in Cairo', level: 'Challenge', text: "I'm an English teacher in Cairo. I wake up at five thirty and I always pray first. My husband makes coffee and I get dressed. We don't eat breakfast at home. I take the metro to work. My lessons start at eight on Sunday, Monday and Tuesday. My students are busy adults. They never miss a class!" }
   ],
 
-  /* ---------- Round 5: Paragraph Builder ---------- */
+  /* ---------- Round 6: Paragraph Builder ---------- */
   model: {
     title: "My Grandfather's Day",
-    topic: "My grandfather's day is very calm.",
+    topic: 'My grandfather Hassan has a calm but busy routine.',
     support: [
-      'He gets up at five o\'clock every morning.',
-      'He drinks tea, reads the newspaper and walks in the park.',
-      'He has lunch with my grandmother at two.',
-      'In the evening he watches the news and talks to his friends.'
+      'He always wakes up at five o\'clock and prays at the mosque near his house.',
+      'Then he drinks tea, reads the newspaper and walks along the Nile for an hour.',
+      "He doesn't watch TV in the morning because he prefers the radio.",
+      'Every Friday he visits my family in Giza and tells us funny stories.'
     ],
-    conclusion: "I love my grandfather's routine because it is simple and happy."
+    conclusion: "I love my grandfather's routine because it is simple, healthy and happy.",
+    find: 'Find: 6 verbs with <b>-s</b> · 2 lists with commas · doesn\'t and grandfather\'s · names, places and days with capitals · the topic and concluding sentences.'
   },
 
   topics: [
@@ -161,16 +205,35 @@ window.CONTENT = {
     'Use he / she + s at least once (gets, goes, works).'
   ],
 
-  /* ---------- Round 6: Judging rubric (each criterion 0 / 1 / 2) ---------- */
+  /* ---------- Round 7: Judging — 5 checks, each 0 / 1 / 2 stars (max 10) ----------
+     Judges COUNT MISTAKES for each check:  no mistakes = 2 · 1–2 mistakes = 1 · 3 or more = 0 */
   rubric: [
-    { icon: 'Aa', title: 'Sentence starts', desc: 'Every sentence starts with a capital letter.' },
-    { icon: 'I', title: 'Special capitals', desc: 'Capital for I, names, places, days, months, languages.' },
-    { icon: '.?!', title: 'End marks', desc: 'Every sentence ends with . ? or !' },
-    { icon: ",'", title: 'Commas & apostrophes', desc: '2 = used correctly · 1 = not used · 0 = mistakes.' },
-    { icon: 'S+V', title: 'Present simple sentences', desc: 'Complete sentences, correct verbs: I work / she works / he doesn\'t.' },
-    { icon: '¶', title: 'Paragraph shape', desc: 'Topic sentence + 3 supporting + concluding. One topic.' }
+    { icon: 'Aa', title: 'Capital letters', from: 'Capital Corners',
+      check: 'Look at the first letter of every sentence, I, names, places and days.',
+      ex: '<u>M</u>y friend <u>S</u>ara goes to <u>C</u>airo on <u>M</u>onday.' },
+    { icon: '.?!', title: 'End marks', from: 'Punctuation Swat',
+      check: 'Look at the end of every sentence. Is there . ? or ! ?',
+      ex: 'She works in a bank<b>.</b> Does she like it<b>?</b>' },
+    { icon: ",'", title: 'Commas and apostrophes', from: 'Punctuation Swat',
+      check: "Find the list and the short forms (don't, doesn't, I'm). Not used = 1 star.",
+      ex: "I wash<b>,</b> cook and clean. He doesn<b>'</b>t drive." },
+    { icon: 'S+V', title: 'Verbs (he / she + s)', from: 'Verb Check',
+      check: 'Look at every verb. he / she / it + s · I / you / we / they: no s.',
+      ex: 'She <u>works</u>. They <u>work</u>. He <u>doesn\'t</u> work.' },
+    { icon: '¶', title: 'Paragraph shape', from: 'Paragraph Builder',
+      check: 'Topic sentence → 3 or more details → concluding sentence. All about one routine.',
+      ex: 'Top bun · fillings · bottom bun 🍔' }
   ],
-  scale: ['0 = No', '1 = Some', '2 = Yes, all'],
+  scale: ['😃 2 stars = no mistakes', '🙂 1 star = 1–2 mistakes', '😟 0 stars = 3 or more mistakes'],
+  maxStars: 10,
+
+  /* Prizes the winners can choose from */
+  prizes: [
+    { e: '🍩', name: 'Donut' },
+    { e: '🍫', name: 'Chocolate' },
+    { e: '🖊️', name: 'Pens' },
+    { e: '🗒️', name: 'Sticky notes' }
+  ],
 
   feedback: [
     '⭐ We like your ___.',
@@ -178,7 +241,8 @@ window.CONTENT = {
     '🔧 You need a capital letter in ___.',
     '🔧 Sentence ___ needs a full stop.',
     '🔧 Add a comma in your list.',
-    '🔧 He / She needs + s: "works", not "work".'
+    '🔧 He / She needs + s: "works", not "work".',
+    '🔧 Your paragraph needs a concluding sentence.'
   ],
 
   exitTicket: 'Write 3 sentences about your daily routine. Use capital letters, full stops and one list with commas.'

@@ -6,7 +6,7 @@
   'use strict';
 
   const C = window.CONTENT;
-  const KEY = 'write-it-right-v1';
+  const KEY = 'write-it-right-v2';
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   const LET = 'ABCD';
@@ -24,17 +24,19 @@
 
   const STAGES = [
     { id: 'setup', short: 'Teams', title: 'Set up the teams', mins: 3 },
-    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Four corners', mins: 7, aim: '6 questions',
+    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Corners or boards', mins: 6, aim: '5 questions',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Walk & swat', mins: 7, aim: '8 sentences',
+    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Swat or boards', mins: 6, aim: '6 sentences',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r3', short: 'Sentence Scramble', title: 'Sentence Scramble', n: 3, skill: 'Present simple sentences', move: 'Relay to the judge', mins: 7, aim: '5 sentences',
+    { id: 'rv', short: 'Verb Check', title: 'Verb Check', n: 3, skill: 'he / she + s · correct or wrong?', move: 'Corners or boards', mins: 6, aim: '6 questions',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r4', short: 'Running Dictation', title: 'Running Dictation', n: 4, skill: 'Accurate writing', move: 'Walk, read, remember', mins: 8,
+    { id: 'r3', short: 'Sentence Scramble', title: 'Sentence Scramble', n: 4, skill: 'Sentences + questions', move: 'Relay to the judge', mins: 6, aim: '4–5 items',
+      tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
+    { id: 'r4', short: 'Running Dictation', title: 'Running Dictation', n: 5, skill: 'Accurate writing', move: 'Walk, read, remember', mins: 7,
       tabs: [['how', 'How to play'], ['play', 'Play'], ['check', 'Check']] },
-    { id: 'r5', short: 'Paragraph Builder', title: 'Paragraph Builder', n: 5, skill: 'Simple paragraphs', move: 'Poster on the wall', mins: 13,
+    { id: 'r5', short: 'Paragraph Builder', title: 'Paragraph Builder', n: 6, skill: 'Simple paragraphs', move: 'Poster on the wall', mins: 12,
       tabs: [['learn', 'Learn'], ['topics', 'Topics'], ['write', 'Write']] },
-    { id: 'r6', short: "Judges' Walk", title: "Judges' Walk", n: 6, skill: 'Peer judging', move: 'Gallery walk', mins: 11,
+    { id: 'r6', short: "Judges' Walk", title: "Judges' Walk", n: 7, skill: 'Peer judging', move: 'Gallery walk', mins: 10,
       tabs: [['how', 'How to judge'], ['walk', 'Walk'], ['scores', 'Enter scores'], ['results', 'Results']] },
     { id: 'awards', short: 'Awards', title: 'Awards', mins: 4 }
   ];
@@ -48,7 +50,7 @@
       students: Array.from({ length: 11 }, (_, i) => 'Student ' + (i + 1)),
       mode: 'pairs', nTeams: 4, teams: [], awards: {}, rounds,
       topics: {}, topicView: 0, judging: {}, judge: null, r4text: 0, r6rot: 1,
-      peek: {}, sound: true, theme: 'light'
+      peek: {}, sound: true, theme: 'light', answerMode: 'move', prizes: {}
     };
   }
   function load() {
@@ -160,7 +162,7 @@
         T.lastCue = elapsed; sfx.cue(); flash(T.everyText);
       }
       if (left <= 5 && left > 0) tone(1000, 0.06, 'sine', 0, 0.08);
-      if (left === 0) { T.running = false; sfx.alarm(); flash(T.label, 'var(--bad)'); }
+      if (left === 0) { T.running = false; T.endedAt = Date.now(); sfx.alarm(); flash(T.label, 'var(--bad)'); setTimeout(drawTimer, 3600); }
       drawTimer();
     }
   }
@@ -171,6 +173,14 @@
     d.classList.toggle('low', T.left <= 10 && T.left > 0 && T.running);
     d.classList.toggle('zero', T.left === 0);
     $('#t-toggle').textContent = T.running ? '⏸' : '▶';
+    // short answer timers (5 / 10 / 20 s) also count down big on the question card
+    const qt = document.querySelector('.qtimer');
+    if (qt) {
+      const show = T.total <= 30 && (T.running || (T.left === 0 && Date.now() - (T.endedAt || 0) < 3500));
+      qt.classList.toggle('on', show);
+      qt.classList.toggle('low', show && T.left <= 3);
+      qt.textContent = show ? (T.left > 0 ? T.left : '⏰') : '';
+    }
     const big = $('#bigtimer');
     if (big.classList.contains('on')) {
       const pct = T.total ? (T.left / T.total) * 100 : 0;
@@ -268,6 +278,22 @@
       <div class="inav-mid"><b>${word} ${r.i + 1}</b> of ${n}<div class="dots">${dots}</div></div>
       <button class="btn ghost" data-act="next" ${r.i >= n - 1 ? 'disabled' : ''}>Next ▶</button></div>`;
   }
+  const boardMode = () => S.answerMode === 'board';
+  function modeBar() {
+    return `<div class="modebar"><span>Teams answer by</span><div class="seg">${[['move', '🏃 Moving to the corners'], ['board', '🪧 Raising their boards']].map(([m, l]) =>
+      `<button class="${S.answerMode === m ? 'on' : ''}" data-act="answerMode" data-m="${m}">${l}</button>`).join('')}</div></div>`;
+  }
+  function quickTimers(moveLabel) {
+    const label = boardMode() ? 'BOARDS UP!' : moveLabel;
+    return [5, 10, 20].map(sec => `<button class="btn qt" data-act="cue" data-sec="${sec}" data-label="${esc(label)}">⏱ ${sec} s</button>`).join('');
+  }
+  const qtimer = '<div class="qtimer" aria-live="polite"></div>';
+  function optionCards(opts, ans, rev) {
+    return `<div class="corners n${opts.length}">${opts.map((o, i) => `<div class="corner c${i} ${rev ? (i === ans ? 'right' : 'wrong') : ''}"><span class="cl">${LET[i]}</span><span class="ct">${esc(o)}</span></div>`).join('')}</div>`;
+  }
+  function boardPic(text) {
+    return `<div class="boardpic"><div class="wb">${text}</div><p>Write it big. When the teacher says <b>"Boards up!"</b>, everyone raises their board.</p></div>`;
+  }
   function nextStageBtn() {
     const nx = STAGES[S.stage + 1];
     const sc = S.teams.length && S.stage > 0 ? `<button class="btn big" data-act="board" data-v="scores">📊 Show scores</button>` : '';
@@ -285,7 +311,8 @@
     const total = STAGES.reduce((a, s) => a + s.mins, 0);
     return `<section class="hero">
         <div><h1>Write It Right! <span class="sub">A Day in the Life</span></h1>
-        <p class="lead">A whole-lesson team game. Students move, write and judge — and practise <b>sentences</b>, <b>simple paragraphs</b>, <b>capital letters</b> and <b>punctuation</b> with the <b>present simple</b> and <b>daily routines</b>.</p></div>
+        <p class="lead">A whole-lesson team game. Students move, write and judge — and practise <b>sentences</b>, <b>simple paragraphs</b>, <b>capital letters</b> and <b>punctuation</b> with the <b>present simple</b> and <b>daily routines</b>.</p>
+        <p class="prizeline">🎁 Winners choose a prize: ${C.prizes.map(g => `<span>${g.e} ${esc(g.name)}</span>`).join('')}</p></div>
       </section>
       <div class="grid2">
         <div class="card">
@@ -345,27 +372,28 @@
         }).join('')}</div></div>`;
     },
     how() {
-      return `<div class="how"><ol class="steps">
+      return `<div class="how">${modeBar()}<ol class="steps">
         <li><b>Read</b> the four sentences on the screen together.</li>
-        <li><b>Talk</b> in your team. Which sentence is correct? (20 seconds)</li>
-        <li><b>Move!</b> The whole team walks to corner <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b>.</li>
+        <li><b>Talk</b> in your team. Which sentence is correct? Watch the timer (5, 10 or 20 seconds).</li>
+        ${boardMode()
+          ? '<li><b>Write</b> the letter <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b> on your team board. When the time ends: <b>Boards up!</b></li>'
+          : '<li><b>Move!</b> When the time ends, the whole team walks to corner <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b>.</li>'}
         <li>The teacher reveals the answer. Correct teams get <b>+1</b>.</li>
         <li><b>Bonus:</b> one person explains the rule → <b>+1</b> more.</li>
       </ol>
-      <div class="cornermap">${[0, 1, 2, 3].map(i => `<div class="cm c${i}">${LET[i]}</div>`).join('')}<div class="cm-mid">teams<br>start here</div></div></div>`;
+      ${boardMode() ? boardPic('B') : `<div class="cornermap">${[0, 1, 2, 3].map(i => `<div class="cm c${i}">${LET[i]}</div>`).join('')}<div class="cm-mid">teams<br>start here</div></div>`}</div>`;
     },
     play() {
       const r = S.rounds.r1, q = C.corners[r.i], rev = !!r.rev[r.i];
       return `${itemNav('r1', C.corners.length, 'Question')}
-        <div class="qcard"><div class="qprompt">Which sentence is correct?</div>
-          <div class="corners">${q.options.map((o, i) => `<div class="corner c${i} ${rev ? (i === q.answer ? 'right' : 'wrong') : ''}"><span class="cl">${LET[i]}</span><span class="ct">${esc(o)}</span></div>`).join('')}</div>
+        <div class="qcard">${qtimer}<div class="qprompt">Which sentence is correct? ${boardMode() ? '🪧 Write A, B, C or D' : '🏃 Go to corner A, B, C or D'}</div>
+          ${optionCards(q.options, q.answer, rev)}
           ${rev ? `<div class="explain">✅ <b>${LET[q.answer]}</b> — ${esc(q.why)}</div>` : ''}
         </div>
-        <div class="actions">
-          <button class="btn" data-act="cue" data-sec="20" data-label="GO TO A CORNER!">⏱ 20 s · talk & move</button>
+        <div class="actions">${quickTimers('GO TO YOUR CORNER!')}
           <button class="btn primary" data-act="reveal">${rev ? 'Hide answer' : 'Reveal answer'} <kbd>R</kbd></button>
         </div>
-        ${rev ? awardBlock('r1:' + r.i, 2, '+1 correct corner · +2 correct and explains the rule') : ''}`;
+        ${rev ? awardBlock('r1:' + r.i, 2, '+1 correct · +2 correct and explains the rule') : ''}`;
     }
   };
 
@@ -384,12 +412,19 @@
         }).join('')}</div></div>`;
     },
     how() {
-      return `<div class="how"><ol class="steps">
+      return boardMode()
+        ? `<div class="how">${modeBar()}<ol class="steps">
+        <li>The screen shows a sentence with a <b>gap</b>.</li>
+        <li>Your team decides the missing mark: <b>. ? ! , ’</b></li>
+        <li>One person <b>writes the mark</b> big on the team board. Change writer every time!</li>
+        <li>When the time ends: <b>Boards up!</b> First correct board = <b>+2</b>. Other correct boards = <b>+1</b>.</li>
+      </ol>${boardPic('?')}</div>`
+        : `<div class="how">${modeBar()}<ol class="steps">
         <li>Each team stands in a line at the <b>back</b> of the room.</li>
         <li>The screen shows a sentence with a <b>gap</b>.</li>
         <li>The <b>first person</b> in each line walks quickly to the wall and <b>swats</b> (touches) the right card: <b>. ? ! , ’</b></li>
         <li>First correct swat = <b>+2</b>. Other correct swats = <b>+1</b>.</li>
-        <li>Runners go to the <b>end</b> of their line. Everybody gets a turn!</li>
+        <li>Swatters go to the <b>end</b> of their line. Everybody gets a turn!</li>
       </ol><p class="tip">💡 Safety: walk — no running, no pushing. A hand on the card = your answer.</p></div>`;
     },
     play() {
@@ -397,15 +432,67 @@
       const [a, b] = q.text.split('{_}');
       const mk = C.marks.find(m => m.mark === q.answer);
       return `${itemNav('r2', C.swat.length, 'Sentence')}
-        <div class="qcard"><div class="sentence">${esc(a)}<span class="gap ${rev ? 'filled' : ''}">${rev ? esc(q.answer) : '&nbsp;'}</span>${esc(b)}</div>
+        <div class="qcard">${qtimer}<div class="qprompt">${boardMode() ? '🪧 Write the missing mark' : '🏃 Swat the missing mark'}</div><div class="sentence">${esc(a)}<span class="gap ${rev ? 'filled' : ''}">${rev ? esc(q.answer) : '&nbsp;'}</span>${esc(b)}</div>
           <div class="pcards">${C.marks.map(m => `<div class="pcard ${rev ? (m.mark === q.answer ? 'right' : 'dim') : ''}"><b>${esc(m.mark)}</b><small>${esc(m.name)}</small></div>`).join('')}</div>
           ${rev ? `<div class="explain">✅ <b>${esc(mk.name)}</b> — ${esc(mk.use)}</div>` : ''}
         </div>
-        <div class="actions">
-          <button class="btn" data-act="cue" data-sec="10" data-label="SWAT!">⏱ 10 s</button>
+        <div class="actions">${quickTimers('SWAT!')}
           <button class="btn primary" data-act="reveal">${rev ? 'Hide answer' : 'Reveal answer'} <kbd>R</kbd></button>
         </div>
-        ${rev ? awardBlock('r2:' + r.i, 2, '+2 first correct swat · +1 correct') : ''}`;
+        ${rev ? awardBlock('r2:' + r.i, 2, '+2 first correct · +1 correct') : ''}`;
+    }
+  };
+
+  /* ----- Verb Check (subject–verb agreement + correct or wrong?) */
+  V.rv = {
+    learn() {
+      return `<div class="lesson"><h2>Subject + verb: do we add <span class="hc">-s</span>?</h2>
+        <div class="svtable"><div class="sv no-s"><b>I · you · we · they</b><span>my friends · my mother and I</span><em>work · go · watch · have</em></div>
+          <div class="sv yes-s"><b>he · she · it</b><span>Omar · my sister · the bus</span><em>work<u>s</u> · go<u>es</u> · watch<u>es</u> · ha<u>s</u></em></div></div>
+        <div class="cards">${C.agreement.map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
+        <h2>👏 Warm-up: Clap for -s</h2>
+        <p class="muted">The teacher says the subject and the verb. Verb needs <b>-s</b>? → <b>clap once</b> 👏. No -s? → hands down. Click to check.</p>
+        <div class="words">${C.clapS.map((x, i) => {
+          const k = 'cs' + i, on = peek(k);
+          return `<button class="word wide ${on ? (x.s ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(x.w)}${on ? `<small>${x.s ? '👏 clap — ' : '✋ no clap — '}${esc(x.a)}</small>` : ''}</button>`;
+        }).join('')}</div></div>`;
+    },
+    how() {
+      return `<div class="how">${modeBar()}
+        <div class="grid2"><div class="qtype"><h3>Type 1 · Choose the verb</h3><p class="mini-q">My sister ___ in a bank.</p>
+            ${optionCards(['work', 'works', 'working'], 1, false)}</div>
+          <div class="qtype"><h3>Type 2 · Correct or wrong?</h3><p class="mini-q">They gets up at seven.</p>
+            ${optionCards(['✓ Correct', '✗ Wrong'], 1, false)}</div></div>
+        <ol class="steps">
+        <li><b>Talk</b> in your team. Watch the timer (5, 10 or 20 seconds).</li>
+        ${boardMode()
+          ? '<li><b>Write</b> the letter (<b>A</b>, <b>B</b> or <b>C</b>) on your team board. When the time ends: <b>Boards up!</b></li>'
+          : '<li><b>Move!</b> When the time ends, walk to the corner: <b>A</b>, <b>B</b> or <b>C</b>. For correct or wrong: corner <b>A = ✓ Correct</b>, corner <b>B = ✗ Wrong</b>.</li>'}
+        <li>The teacher reveals the answer. Correct teams get <b>+1</b>.</li>
+        <li><b>Bonus +1:</b> say the correct sentence (for example: <i>They get up at seven.</i>).</li>
+      </ol></div>`;
+    },
+    play() {
+      const r = S.rounds.rv, q = C.verbs[r.i], rev = !!r.rev[r.i];
+      const tf = q.type === 'tf';
+      const opts = tf ? ['✓ Correct', '✗ Wrong'] : q.options;
+      const ans = tf ? (q.ok ? 0 : 1) : q.answer;
+      let sentence;
+      if (tf) sentence = `<div class="sentence ${rev ? (q.ok ? 'ok' : 'bad') : ''}">${esc(q.text)}</div>`;
+      else {
+        const [a, b] = q.text.split('___');
+        sentence = `<div class="sentence">${esc(a)}<span class="gap word-gap ${rev ? 'filled' : ''}">${rev ? esc(q.options[q.answer]) : '&nbsp;'}</span>${esc(b)}</div>`;
+      }
+      return `${itemNav('rv', C.verbs.length, 'Question')}
+        <div class="qcard">${qtimer}<div class="qprompt">${tf ? 'Correct or wrong?' : 'Choose the correct verb.'} ${boardMode() ? '🪧 Write the letter' : '🏃 Go to the corner'}</div>
+          ${sentence}
+          ${optionCards(opts, ans, rev)}
+          ${rev ? `<div class="explain">✅ <b>${LET[ans]}</b> — ${esc(q.why)}${q.fix ? `<div class="fix">✏️ ${hl(q.fix)}</div>` : ''}</div>` : ''}
+        </div>
+        <div class="actions">${quickTimers('GO TO YOUR CORNER!')}
+          <button class="btn primary" data-act="reveal">${rev ? 'Hide answer' : 'Reveal answer'} <kbd>R</kbd></button>
+        </div>
+        ${rev ? awardBlock('rv:' + r.i, 2, '+1 correct · +2 correct and says the correct sentence') : ''}`;
     }
   };
 
@@ -428,19 +515,20 @@
     },
     how() {
       return `<div class="how"><ol class="steps">
-        <li>The screen shows <b>mixed-up words</b> (no capitals, no punctuation).</li>
-        <li>Your team writes the <b>correct sentence</b> on paper — with <b>capital letters</b> and <b>punctuation</b>.</li>
+        <li>The screen shows <b>mixed-up words</b> (no capitals, no punctuation). Some make a <b>sentence</b>, some make a <b>question</b> ❓.</li>
+        <li>Your team writes it correctly on paper — with <b>capital letters</b> and <b>punctuation</b> (questions end with <b>?</b>).</li>
         <li>A <b>runner</b> walks it to the teacher (the judge). Change runner every time!</li>
         <li>Points: <b>+1</b> word order · <b>+1</b> capitals · <b>+1</b> punctuation. First correct team: <b>+1 bonus</b>.</li>
-      </ol><p class="tip">💡 Watch the verb: he / she + <b>s</b> (gets, goes, studies).</p></div>`;
+      </ol><p class="tip">💡 Watch the verb: he / she + <b>s</b> (gets, goes, studies). Questions: <b>Do / Does / Where / What time</b> … + <b>?</b></p></div>`;
     },
     play() {
       const r = S.rounds.r3, q = C.scramble[r.i], rev = !!r.rev[r.i];
       const words = q.words.split(' ');
       let mixed = seededShuffle(words, r.i + 3);
       if (mixed.join(' ') === words.join(' ')) mixed = mixed.slice(1).concat(mixed[0]);
-      return `${itemNav('r3', C.scramble.length, 'Sentence')}
-        <div class="qcard"><div class="tiles">${mixed.map((w, i) => `<span class="tile" style="--d:${i * 60}ms">${esc(w)}</span>`).join('')}</div>
+      const isQ = q.answer.trim().endsWith('?');
+      return `${itemNav('r3', C.scramble.length, 'Item')}
+        <div class="qcard">${qtimer}<div class="qprompt"><span class="kind ${isQ ? 'q' : ''}">${isQ ? '❓ Make a question' : '✏️ Make a sentence'}</span></div><div class="tiles">${mixed.map((w, i) => `<span class="tile" style="--d:${i * 60}ms">${esc(w)}</span>`).join('')}</div>
           ${rev ? `<div class="answer">${hl(q.answer)}</div>
             <div class="checks"><span>✓ word order</span><span>✓ <b class="hc">C</b>apitals</span><span>✓ punctuation <b class="hp">. , ? ! ’</b></span></div>` : ''}
         </div>
@@ -517,7 +605,7 @@
         <div><h2>Model: ${esc(m.title)}</h2>
           <p class="para model"><span class="p-top">${sent(m.topic)}</span> ${m.support.map((s, i) => `<span class="p-sup f${(i % 3) + 1}">${sent(s)}</span>`).join(' ')} <span class="p-bot">${sent(m.conclusion)}</span></p>
           <div class="actions left"><button class="btn" data-act="peek" data-k="modelHl">${on ? 'Hide' : 'Show'} capitals & punctuation</button></div>
-          <p class="muted">Find: 3 verbs with <b>-s</b> · a list with commas · two apostrophes · the topic & concluding sentences.</p>
+          <p class="muted">${m.find}</p>
         </div></div></div>`;
     },
     topics() {
@@ -559,9 +647,11 @@
     }
   };
   function rubricList() {
-    return `<ul class="rubric">${C.rubric.map(c => `<li><i>${esc(c.icon)}</i><div><b>${esc(c.title)}</b><small>${esc(c.desc)}</small></div></li>`).join('')}</ul>
-      <p class="scale">${C.scale.map(s => `<span>${esc(s)}</span>`).join('')}</p>`;
+    return `<ol class="rubric">${C.rubric.map(c => `<li><i>${esc(c.icon)}</i><div><b>${esc(c.title)}</b> <span class="from">from ${esc(c.from)}</span>
+        <small>🔎 ${esc(c.check)}</small><small class="rex">${c.ex}</small></div></li>`).join('')}</ol>
+      <div class="scale">${C.scale.map(s => `<span>${esc(s)}</span>`).join('')}</div>`;
   }
+  const FACE = ['😟', '🙂', '😃'];
 
   /* ----- Round 6 */
   function judgeTotal(j, t) {
@@ -593,13 +683,19 @@
   V.r6 = {
     how() {
       return `<div class="lesson"><div class="grid2">
-        <div><h2>Judge the posters</h2>${rubricList()}
-          <p class="tip">Max <b>12 stars</b> per poster. You cannot judge your own poster.</p></div>
+        <div><h2>How to judge a poster</h2>
+          <ol class="steps small">
+            <li><b>Read</b> the poster out loud together.</li>
+            <li><b>Check one thing at a time</b> — the 5 checks below. They are the things you practised in the game.</li>
+            <li><b>Count the mistakes</b> for each check and give stars: <b>no mistakes = 2</b> · <b>1–2 mistakes = 1</b> · <b>3 or more = 0</b>.</li>
+            <li><b>Write</b> one ⭐ good thing and one 🔧 thing to fix.</li>
+          </ol>
+          <h2>The 5 checks</h2>${rubricList()}
+          <p class="tip">Max <b>${C.maxStars} stars</b> per poster. You cannot judge your own poster.</p></div>
         <div><h2>Be fair! 👀</h2>
-          <p>The teacher judges too. Teams whose stars are <b>close to the teacher's</b> win <b>Sharp-Eye</b> bonus points (up to +3).</p>
+          <p>The teacher judges too. Teams whose stars are <b>close to the teacher's</b> win <b>Sharp-Eye</b> bonus points (up to +3). Giving low stars to win does not help!</p>
           <h2>Say it nicely 🗣️</h2>
-          <ul class="frames2">${C.feedback.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
-          <p class="muted">At each poster: read it together, give stars on your judging sheet, write one ⭐ and one 🔧.</p></div>
+          <ul class="frames2">${C.feedback.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
       </div></div>`;
     },
     walk() {
@@ -623,15 +719,16 @@
       const judges = S.teams.concat([{ id: 'teacher', name: 'Teacher', sym: '🎓', color: '#444' }]);
       const sel = judges.find(j => j.id === S.judge);
       const done = j => S.teams.filter(t => t.id !== j.id).every(t => judgeTotal(j.id, t.id) != null);
-      let body = `<p class="muted center">Each team sends one person to the screen to enter its stars. Choose the judge:</p>`;
+      let body = `<p class="muted center">Each team sends one person to the board to enter its stars from the judging sheet. Choose the judge:</p>
+        <div class="scale center">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>`;
       if (sel) {
         const targets = S.teams.filter(t => t.id !== sel.id);
         body = `<div class="jgrid">${targets.map(t => {
           const a = (S.judging[sel.id] || {})[t.id] || [];
           const tot = judgeTotal(sel.id, t.id);
-          return `<div class="jcard" style="--c:${t.color}"><div class="jh">${tchip(t)}<span class="jt">${tot == null ? '…' : tot + ' / 12'}</span></div>
-            ${C.rubric.map((c, ci) => `<div class="jrow"><span title="${esc(c.desc)}"><i>${esc(c.icon)}</i>${esc(c.title)}</span><div class="pills">${[0, 1, 2].map(v =>
-              `<button class="pill ${a[ci] === v ? 'on' : ''}" style="--c:${t.color}" data-act="judge" data-t="${t.id}" data-c="${ci}" data-v="${v}">${v}</button>`).join('')}</div></div>`).join('')}
+          return `<div class="jcard" style="--c:${t.color}"><div class="jh">${tchip(t)}<span class="jt">${tot == null ? '…' : tot + ' / ' + C.maxStars}</span></div>
+            ${C.rubric.map((c, ci) => `<div class="jrow"><span title="${esc(c.check)}"><i>${esc(c.icon)}</i>${esc(c.title)}</span><div class="pills">${[0, 1, 2].map(v =>
+              `<button class="pill face ${a[ci] === v ? 'on' : ''}" style="--c:${t.color}" data-act="judge" data-t="${t.id}" data-c="${ci}" data-v="${v}" title="${esc(C.scale[2 - v])}">${FACE[v]} ${v}</button>`).join('')}</div></div>`).join('')}
           </div>`;
         }).join('')}</div>`;
       }
@@ -646,7 +743,7 @@
         <div class="tablewrap"><table class="res"><thead><tr><th>Poster</th>${S.teams.map(j => `<th>${tdot(j)}</th>`).join('')}<th>🎓</th><th>Average</th><th>Points</th></tr></thead>
         <tbody>${rows.map(r => `<tr><td>${tchip(r.t)}</td>${S.teams.map(j => j.id === r.t.id ? '<td class="self">—</td>' : `<td>${judgeTotal(j.id, r.t.id) ?? '·'}</td>`).join('')}
           <td>${r.teacher ?? '·'}</td><td><b>${r.avg == null ? '–' : r.avg.toFixed(1)}</b></td><td class="pts">+${r.pts}</td></tr>`).join('')}</tbody></table></div>
-        <p class="muted">Points = average stars × 2 (max 24). The teacher's stars count double.</p>
+        <p class="muted">Points = average stars × 2 (max ${C.maxStars * 2}). The teacher's stars count double.</p>
         <h2>👀 Sharp-Eye judges</h2>
         ${anyTeacher ? `<div class="eyes">${eye.map(e => `<div class="eye">${tchip(e.j)}<span>${e.md == null ? 'no scores' : 'avg. difference ' + e.md.toFixed(1)}</span><b>+${e.bonus}</b></div>`).join('')}</div>
           <p class="muted">Difference from the teacher: ≤1 → +3 · ≤2 → +2 · ≤3 → +1</p>`
@@ -666,18 +763,26 @@
     const { rows, eye } = results();
     const bestPara = rows.filter(r => r.avg != null).sort((a, b) => b.avg - a.avg)[0];
     const bestEye = eye.filter(e => e.md != null).sort((a, b) => a.md - b.md)[0];
-    const cols = [['r1', 'R1'], ['r2', 'R2'], ['r3', 'R3'], ['r4', 'R4'], ['r6', 'Para + judging'], ['manual', '±']];
+    const cols = ['r1', 'r2', 'rv', 'r3', 'r4'].map(id => [id, 'R' + STAGES.find(x => x.id === id).n]).concat([['r6', 'Para + judging'], ['manual', '±']]);
+    const gift = k => S.prizes[k] != null ? C.prizes[S.prizes[k]] : null;
+    const giftTag = k => gift(k) ? `<span class="gift-tag" title="${esc(gift(k).name)}">${gift(k).e}</span>` : '';
+    const slots = [['p1', '🥇 1st place', ranked[0] && ranked[0].t], ['p2', '🥈 2nd place', ranked[1] && ranked[1].t], ['p3', '🥉 3rd place', ranked[2] && ranked[2].t],
+      ['para', '📝 Best Paragraph', bestPara && bestPara.t], ['eye', '👀 Sharp-Eye Judges', bestEye && bestEye.j]].filter(x => x[2]);
     return `<div class="lesson">
       <h1 class="center">🏆 And the winners are…</h1>
       <div class="podium">${podium.map(r => `<div class="pod p${r.rank}" style="--c:${r.t.color}; --h:${30 + (r.s / max) * 70}%">
-          <div class="pod-team"><i>${esc(r.t.sym)}</i><b>${esc(r.t.name)}</b><small>${r.t.members.map(esc).join(', ')}</small></div>
+          <div class="pod-team">${giftTag('p' + (ranked.indexOf(r) + 1))}<i>${esc(r.t.sym)}</i><b>${esc(r.t.name)}</b><small>${r.t.members.map(esc).join(', ')}</small></div>
           <div class="pod-bar"><span>${r.s}</span><em>${r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : '🥉'}</em></div></div>`).join('')}</div>
       <div class="actions"><button class="btn big primary" data-act="celebrate">🎉 Celebrate</button></div>
       <div class="grid3">
-        <div class="award-card"><div class="ai">📝</div><b>Best Paragraph</b>${bestPara ? tchip(bestPara.t) + `<small>${bestPara.avg.toFixed(1)} / 12 stars</small>` : '<small>—</small>'}</div>
-        <div class="award-card"><div class="ai">👀</div><b>Sharp-Eye Judges</b>${bestEye ? tchip(bestEye.j) + `<small>closest to the teacher</small>` : '<small>needs teacher stars</small>'}</div>
+        <div class="award-card"><div class="ai">📝</div><b>Best Paragraph</b>${bestPara ? tchip(bestPara.t) + `<small>${bestPara.avg.toFixed(1)} / ${C.maxStars} stars</small>` + giftTag('para') : '<small>—</small>'}</div>
+        <div class="award-card"><div class="ai">👀</div><b>Sharp-Eye Judges</b>${bestEye ? tchip(bestEye.j) + `<small>closest to the teacher</small>` + giftTag('eye') : '<small>needs teacher stars</small>'}</div>
         <div class="award-card"><div class="ai">🎟️</div><b>Exit ticket</b><small>${esc(C.exitTicket)}</small></div>
       </div>
+      <h2>🎁 Prizes — the winners choose!</h2>
+      <p class="muted">1st place chooses first, then 2nd, then 3rd. Tap the prize each team chooses.</p>
+      <div class="prizes">${slots.map(([k, l, t]) => `<div class="prow"><div class="plabel"><b>${l}</b>${tchip(t)}</div>
+        <div class="gifts">${C.prizes.map((g, i) => `<button class="gift ${S.prizes[k] === i ? 'on' : ''}" style="--c:${t.color}" data-act="prize" data-k="${k}" data-i="${i}"><span>${g.e}</span>${esc(g.name)}</button>`).join('')}</div></div>`).join('')}</div>
       <h2>Score sheet</h2>
       <div class="tablewrap"><table class="res"><thead><tr><th>#</th><th>Team</th>${cols.map(c => `<th>${c[1]}</th>`).join('')}<th>Total</th></tr></thead>
       <tbody>${ranked.map(r => `<tr><td>${r.rank}</td><td>${tchip(r.t)}</td>${cols.map(c => `<td>${scoreBy(r.t.id, c[0])}</td>`).join('')}<td class="pts">${r.s}</td></tr>`).join('')}</tbody></table></div>
@@ -736,6 +841,7 @@
     main.className = 'st-' + st.id;
     renderScores();
     drawBoard();
+    drawTimer();
     save();
   }
   function renderScores() {
@@ -798,11 +904,12 @@
     });
     if (keys.includes('judge')) teams.forEach(t => {
       const others = S.teams.length ? S.teams.filter(o => o.id !== t.id) : [1, 2, 3, 4].map(i => ({ name: 'Team ' + i }));
-      out.push(`<div class="page"><div class="ph">Judging Sheet · Judges: ${esc(t.name)}</div>
-        <p class="small">Give 0, 1 or 2 stars: <b>0 = No · 1 = Some · 2 = Yes, all</b>. Max 12 per poster.</p>
-        <table class="jt-print"><tr><th>Criteria</th>${others.map(o => `<th>${esc(o.name)}</th>`).join('')}</tr>
-        ${C.rubric.map(c => `<tr><td><b>${esc(c.title)}</b><br><small>${esc(c.desc)}</small></td>${others.map(() => '<td class="st">0 1 2</td>').join('')}</tr>`).join('')}
-        <tr class="tot"><td><b>TOTAL /12</b></td>${others.map(() => '<td></td>').join('')}</tr>
+      out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)}</div>
+        <div class="jhow"><b>How to judge:</b> ① Read the poster together. ② Do one check at a time. ③ Count the mistakes and <b>circle</b> the stars. ④ Write one ⭐ and one 🔧.</div>
+        <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+        <table class="jt-print"><tr><th>Check</th>${others.map(o => `<th>${esc(o.name)}</th>`).join('')}</tr>
+        ${C.rubric.map((c, i) => `<tr><td><b>${i + 1}. ${esc(c.title)}</b><br><small>🔎 ${esc(c.check)}</small></td>${others.map(() => '<td class="st">😃 2<br>🙂 1<br>😟 0</td>').join('')}</tr>`).join('')}
+        <tr class="tot"><td><b>TOTAL /${C.maxStars}</b></td>${others.map(() => '<td></td>').join('')}</tr>
         <tr class="fb"><td><b>⭐ One good thing</b></td>${others.map(() => '<td></td>').join('')}</tr>
         <tr class="fb"><td><b>🔧 One thing to fix</b></td>${others.map(() => '<td></td>').join('')}</tr></table></div>`);
     });
@@ -818,7 +925,7 @@
     prev() { const r = S.rounds[stage().id]; if (r && r.i > 0) r.i--; },
     next() {
       const id = stage().id, r = S.rounds[id];
-      const n = { r1: C.corners.length, r2: C.swat.length, r3: C.scramble.length }[id];
+      const n = { r1: C.corners.length, r2: C.swat.length, rv: C.verbs.length, r3: C.scramble.length }[id];
       if (r && n && r.i < n - 1) r.i++;
     },
     reveal() {
@@ -839,7 +946,7 @@
     },
     cue(d) {
       cue(+d.sec, d.label, d.every ? { every: +d.every, everyText: d.everyText } : null);
-      flash(d.label && +d.sec <= 30 ? d.label : '⏱ ' + fmt(+d.sec), 'var(--accent)');
+      if (+d.sec > 30) flash('⏱ ' + fmt(+d.sec), 'var(--accent)');
       return false;
     },
     r4text(d) { S.r4text = +d.i; },
@@ -882,6 +989,8 @@
     scOpen(d) { scOpen = scOpen === d.team ? null : d.team; renderScores(); return false; },
     board(d) { boardView = d.v; closeModal(); $('.top').classList.remove('more-open'); if (d.v === 'scores') sfx.reveal(); },
     closeBoard() { boardView = null; },
+    answerMode(d) { S.answerMode = d.m; },
+    prize(d) { S.prizes[d.k] = S.prizes[d.k] === +d.i ? null : +d.i; if (S.prizes[d.k] != null) sfx.point(); },
     celebrate() { confetti(); sfx.fanfare(); return false; },
     tToggle() { T.running ? timerPause() : timerStart(); return false; },
     tReset() { timerSet(T.total, { label: T.label, every: T.every, everyText: T.everyText }); return false; },

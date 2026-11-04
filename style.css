@@ -332,6 +332,59 @@ table.res .pts { font-weight: 800; font-size: 1.2rem; color: var(--good); }
 .confetti i { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 2px; animation: fall linear forwards; }
 @keyframes fall { to { top: 105vh; transform: rotate(720deg) translateX(60px); } }
 
+/* ---------- answer modes, quick timers, new question types ---------- */
+.modebar { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 0 auto 16px; font-weight: 600; }
+.modebar .seg { margin: 0; }
+.qcard { position: relative; }
+.qtimer { position: absolute; top: -18px; right: -12px; width: 86px; height: 86px; border-radius: 50%; background: var(--accent); color: #fff; display: none; place-items: center; font-size: 2.6rem; font-weight: 800; box-shadow: 0 6px 18px rgba(0,0,0,.2); z-index: 2; font-variant-numeric: tabular-nums; }
+.qtimer.on { display: grid; animation: pop .3s; }
+.qtimer.low { background: var(--bad); animation: pulse .5s infinite alternate; }
+@keyframes pop { from { transform: scale(.4); } }
+.btn.qt { min-width: 92px; }
+.corners.n2 { grid-template-columns: 1fr 1fr; }
+.corners.n3 { grid-template-columns: repeat(3, 1fr); }
+.corners.n2 .corner, .corners.n3 .corner { justify-content: center; }
+.sentence.ok { color: var(--good); }
+.sentence.bad { color: var(--bad); text-decoration: line-through; text-decoration-thickness: 4px; }
+.gap.word-gap { min-width: 3.2em; }
+.gap.word-gap.filled { min-width: 0; transform: none; padding: 0 .1em; background: color-mix(in srgb, var(--good) 16%, transparent); border-radius: 10px; color: var(--good); }
+.fix { margin-top: 8px; font-size: 1.35rem; font-weight: 600; }
+.kind { display: inline-block; border-radius: 999px; padding: .15em .9em; background: var(--line); color: var(--ink); font-weight: 600; }
+.kind.q { background: #7B2CBF; color: #fff; }
+.boardpic { display: flex; align-items: center; gap: 20px; justify-content: center; margin: 18px auto; max-width: 700px; }
+.boardpic .wb { flex: none; width: 150px; height: 110px; background: #fff; border: 8px solid #555; border-radius: 12px; display: grid; place-items: center; font-size: 4rem; font-weight: 800; color: #1E1B18; box-shadow: 0 6px 0 #333; transform: rotate(-3deg); }
+.boardpic p { font-size: 1.1rem; }
+.svtable { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.sv { border-radius: 16px; padding: 14px 18px; display: flex; flex-direction: column; gap: 4px; border: 3px solid var(--line); background: var(--panel); }
+.sv b { font-size: 1.5rem; } .sv span { color: var(--muted); } .sv em { font-style: normal; font-size: 1.4rem; font-weight: 600; }
+.sv.yes-s { border-color: var(--cap); } .sv u { text-decoration: none; color: var(--cap); font-weight: 800; }
+.qtype { background: var(--panel); border: 2px solid var(--line); border-radius: 16px; padding: 12px 16px; }
+.qtype h3 { margin: 0 0 6px; } .qtype .corner { font-size: 1.1rem; padding: 8px; } .qtype .corner .cl { width: 38px; height: 38px; }
+.mini-q { font-size: 1.4rem; font-weight: 600; margin: 4px 0 10px; }
+.rubric { counter-reset: none; }
+.rubric .from { font-size: .75rem; font-weight: 600; background: var(--bg); border: 1.5px solid var(--line); border-radius: 999px; padding: .05em .6em; color: var(--muted); white-space: nowrap; }
+.rubric small { margin-top: 2px; }
+.rubric .rex { color: var(--ink); font-size: .9rem; }
+.rubric .rex u { text-decoration: none; color: var(--cap); font-weight: 800; } .rubric .rex b { color: var(--punc); }
+.scale.center { justify-content: center; margin-bottom: 12px; }
+.pill.face { min-width: 64px; }
+.prizeline { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-weight: 600; }
+.prizeline span { background: var(--panel); border: 2px solid var(--line); border-radius: 999px; padding: .2em .8em; font-weight: 400; }
+.prizes { display: grid; gap: 10px; margin-bottom: 20px; }
+.prow { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--panel); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
+.plabel { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gifts { display: flex; gap: 8px; flex-wrap: wrap; }
+.gift { border: 3px solid var(--line); background: var(--bg); border-radius: 14px; padding: 6px 12px; display: flex; flex-direction: column; align-items: center; min-width: 96px; font-weight: 600; font-size: .85rem; }
+.gift span { font-size: 2rem; line-height: 1.1; }
+.gift.on { border-color: var(--c); background: var(--bg); background: color-mix(in srgb, var(--c) 16%, var(--panel)); transform: scale(1.06); }
+.gift-tag { display: block; font-size: 2.4rem; line-height: 1; margin-bottom: 4px; animation: pop .4s; }
+@media (max-width: 700px) {
+  .corners.n3 { grid-template-columns: 1fr; }
+  .svtable { grid-template-columns: 1fr; }
+  .qtimer { width: 64px; height: 64px; font-size: 2rem; top: -12px; right: -6px; }
+  .gift { min-width: 72px; }
+}
+
 /* ---------- board views: teams + leaderboard ---------- */
 .board-btn span { display: none; }
 .boardview { position: fixed; inset: 0; z-index: 45; background: var(--bg); display: none; overflow: auto; cursor: pointer; padding: max(24px, env(safe-area-inset-top)) 24px 24px; }
@@ -477,7 +530,12 @@ table.res .pts { font-weight: 800; font-size: 1.2rem; color: var(--good); }
   .pchk { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 10pt; margin-top: 5mm; }
   .jt-print { width: 100%; border-collapse: collapse; font-size: 10.5pt; }
   .jt-print th, .jt-print td { border: 1.5px solid #333; padding: 5px; vertical-align: top; }
-  .jt-print td.st { text-align: center; vertical-align: middle; font-size: 14pt; letter-spacing: 3px; white-space: nowrap; }
+  .jhow { font-size: 11pt; border: 1.5px solid #333; border-radius: 6px; padding: 6px 8px; margin-bottom: 4mm; }
+  .jkey { display: flex; gap: 6mm; font-size: 10.5pt; font-weight: 600; margin-bottom: 4mm; }
+  .jt-print { table-layout: fixed; }
+  .jt-print th:first-child, .jt-print td:first-child { width: 38%; }
+  .jt-print td:first-child b { font-size: 12pt; }
+  .jt-print td.st { text-align: center; vertical-align: middle; font-size: 11pt; line-height: 1.5; }
   .jt-print tr.tot td { height: 12mm; }
   .jt-print tr.fb td { height: 26mm; }
   .handout .rulesref { display: block; font-size: 11pt; }

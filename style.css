@@ -576,6 +576,13 @@ table.res .pts { font-weight: 800; font-size: 1.2rem; color: var(--good); }
   .jt-print { table-layout: fixed; }
   .jchecks { font-size: 9.5pt; margin: 0 0 4mm; padding-left: 5mm; columns: 1; }
   .jchecks li { margin: 0.5mm 0; }
+  .jt-print.groups th.ck, .jt-print.groups td.ck { width: 22%; }
+  .jt-print.groups th.gname { font-size: 10pt; text-align: center; }
+  .jt-print.groups th.gname span { display: block; color: #555; }
+  .nameline { border-bottom: 1.5px solid #333; height: 9mm; margin: 0 2px; }
+  .jt-print.groups td.st { height: 19mm; font-size: 11pt; line-height: 1.45; text-align: center; vertical-align: middle; }
+  .jt-print.groups tr.fb td { height: 18mm; }
+  .jt-print.groups tr.tot td { height: 10mm; }
   .jblock { margin-bottom: 4mm; break-inside: avoid; }
   .jb-h { font-size: 13pt; margin-bottom: 2mm; }
   .jt-print th.ck, .jt-print td.ck { width: 34%; text-align: left; vertical-align: middle; }

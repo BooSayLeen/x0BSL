@@ -719,8 +719,8 @@
         <div><h2>How to judge a poster</h2>
           <ol class="steps small">
             <li><b>Read</b> the poster out loud together.</li>
-            <li><b>Check one thing at a time</b> — the 5 checks below. For each check, write <b>✓</b> or <b>✗</b> under sentences <b>1 2 3 4 5</b> on the judging sheet.</li>
-            <li><b>Count the ✗</b> and give stars: <b>no ✗ = 2</b> · <b>1–2 ✗ = 1</b> · <b>3 or more ✗ = 0</b>.</li>
+            <li><b>Check one thing at a time</b> — the 5 checks below. Write the group names at the top of your judging sheet.</li>
+            <li><b>Count the mistakes</b> in the 5 sentences for each check and give stars: <b>no mistakes = 2</b> · <b>1–2 mistakes = 1</b> · <b>3 or more = 0</b>.</li>
             <li><b>Write</b> one ⭐ good thing and one 🔧 thing to fix.</li>
           </ol>
           <h2>The 5 checks</h2>${rubricList()}
@@ -950,24 +950,17 @@
         <div class="pchk">${C.missions.map(m => `<span>⭐ ${esc(m)}</span>`).join('')}</div></div>`);
     });
     if (keys.includes('judge')) teams.forEach(t => {
-      // one block per poster, 2 posters per page · columns = sentences 1–5
-      const others = S.teams.length ? S.teams.filter(o => o.id !== t.id) : [1, 2, 3, 4].map(i => ({ name: 'Team ' + i }));
-      const nS = C.sentences || 5;
-      const hint = ['topic', 'detail', 'detail', 'detail', 'end'];
-      const block = o => `<div class="jblock"><div class="jb-h">Poster: <b>${esc(o.name)}</b></div>
-        <table class="jt-print"><tr><th class="ck">Check</th>${Array.from({ length: nS }, (_, k) => `<th class="sn">${k + 1}</th>`).join('')}<th class="nx">✗</th><th class="sx">Stars</th></tr>
-        ${C.rubric.map((c, i) => `<tr><td class="ck"><b>${i + 1}. ${esc(c.title)}</b></td>${Array.from({ length: nS }, (_, k) =>
-          `<td class="tick">${i === C.rubric.length - 1 ? `<small>${hint[k] || ''}</small>` : ''}</td>`).join('')}<td class="nx"></td><td class="sx">0 · 1 · 2</td></tr>`).join('')}
-        <tr class="tot"><td class="ck"><b>TOTAL stars /${C.maxStars}</b></td><td colspan="${nS + 2}"></td></tr>
-        <tr class="fb"><td class="ck"><b>⭐ One good thing</b></td><td colspan="${nS + 2}"></td></tr>
-        <tr class="fb"><td class="ck"><b>🔧 One thing to fix</b></td><td colspan="${nS + 2}"></td></tr></table></div>`;
-      for (let k = 0; k < others.length; k += 2) {
-        out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)} · ${esc(levelName())}</div>
-          <div class="jhow"><b>How to judge:</b> ① Read the 5 sentences together. ② For each check, write <b>✓</b> or <b>✗</b> under sentences 1–5. ③ Count the <b>✗</b> and circle the stars. ④ Write one ⭐ and one 🔧.</div>
-          <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
-          <ol class="jchecks">${C.rubric.map(c => `<li><b>${esc(c.title)}:</b> ${esc(c.check)}</li>`).join('')}</ol>
-          ${others.slice(k, k + 2).map(block).join('')}</div>`);
-      }
+      // one page per team · columns = Group 1–6 with an empty line: students write the group names
+      const G = 6;
+      out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)} · ${esc(levelName())}</div>
+        <div class="jhow"><b>How to judge:</b> ① Write the group names at the top. ② Read each poster (5 sentences) together. ③ For each check, count the mistakes and <b>circle</b> the stars. ④ Write one ⭐ and one 🔧. Do not judge your own group.</div>
+        <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+        <ol class="jchecks">${C.rubric.map(c => `<li><b>${esc(c.title)}:</b> ${esc(c.check)}</li>`).join('')}</ol>
+        <table class="jt-print groups"><tr><th class="ck">Check</th>${Array.from({ length: G }, (_, k) => `<th class="gname"><span>Group ${k + 1}</span><div class="nameline"></div></th>`).join('')}</tr>
+        ${C.rubric.map((c, i) => `<tr><td class="ck"><b>${i + 1}. ${esc(c.title)}</b></td>${Array.from({ length: G }, () => '<td class="st">😃 2<br>🙂 1<br>😟 0</td>').join('')}</tr>`).join('')}
+        <tr class="tot"><td class="ck"><b>TOTAL /${C.maxStars}</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr>
+        <tr class="fb"><td class="ck"><b>⭐ One good thing</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr>
+        <tr class="fb"><td class="ck"><b>🔧 One thing to fix</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr></table></div>`);
     });
     if (keys.includes('handout')) out.push(`<div class="page handout"><h1>Write It Right! · Rules</h1>${rulesHtml()}</div>`);
     return out.join('');

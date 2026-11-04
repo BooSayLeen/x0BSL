@@ -352,8 +352,8 @@ window.CONTENT = {
       check: 'Sentence 1 = topic · sentences 2, 3, 4 = details · sentence 5 = concluding. All about one routine.',
       ex: 'Top bun · fillings · bottom bun 🍔' }
   ],
-  scale: ['😃 2 stars = no ✗', '🙂 1 star = 1–2 ✗', '😟 0 stars = 3 or more ✗'],
-  sentences: 5, // posters have 5 sentences; judges tick ✓ / ✗ for sentences 1–5
+  scale: ['😃 2 stars = no mistakes', '🙂 1 star = 1–2 mistakes', '😟 0 stars = 3 or more mistakes'],
+  sentences: 5, // posters have 5 sentences
   maxStars: 10,
 
   /* Prizes the winners can choose from */

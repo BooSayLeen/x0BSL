@@ -24,11 +24,11 @@
 
   const STAGES = [
     { id: 'setup', short: 'Teams', title: 'Set up the teams', mins: 3 },
-    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Corners or boards', mins: 6, aim: '5 questions',
+    { id: 'r1', short: 'Capital Corners', title: 'Capital Corners', n: 1, skill: 'Capital letters', move: 'Corners, boards or cards', mins: 6, aim: '5 questions',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Swat or boards', mins: 6, aim: '6 sentences',
+    { id: 'r2', short: 'Punctuation Swat', title: 'Punctuation Swat', n: 2, skill: '.  ?  !  ,  ’', move: 'Swat, boards or cards', mins: 6, aim: '6 sentences',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
-    { id: 'rv', short: 'Verb Check', title: 'Verb Check', n: 3, skill: 'he / she + s · correct or wrong?', move: 'Corners or boards', mins: 6, aim: '6 questions',
+    { id: 'rv', short: 'Verb Check', title: 'Verb Check', n: 3, skill: 'he / she + s · correct or wrong?', move: 'Corners, boards or cards', mins: 6, aim: '6 questions',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
     { id: 'r3', short: 'Sentence Scramble', title: 'Sentence Scramble', n: 4, skill: 'Sentences + questions', move: 'Relay to the judge', mins: 6, aim: '4–5 items',
       tabs: [['learn', 'Learn'], ['how', 'How to play'], ['play', 'Play']] },
@@ -280,12 +280,14 @@
       <button class="btn ghost" data-act="next" ${r.i >= n - 1 ? 'disabled' : ''}>Next ▶</button></div>`;
   }
   const boardMode = () => S.answerMode === 'board';
+  // pick text for the current answer mode: run to the corner · write on the board · raise the right card
+  const byMode = (move, board, card) => S.answerMode === 'board' ? board : S.answerMode === 'card' ? card : move;
   function modeBar() {
-    return `<div class="modebar"><span>Teams answer by</span><div class="seg">${[['move', '🏃 Moving to the corners'], ['board', '🪧 Raising their boards']].map(([m, l]) =>
+    return `<div class="modebar"><span>Teams answer by</span><div class="seg">${[['move', '🏃 Running to the corner'], ['board', '🪧 Writing on the board'], ['card', '🃏 Raising the right card']].map(([m, l]) =>
       `<button class="${S.answerMode === m ? 'on' : ''}" data-act="answerMode" data-m="${m}">${l}</button>`).join('')}</div></div>`;
   }
   function quickTimers(moveLabel) {
-    const label = boardMode() ? 'BOARDS UP!' : moveLabel;
+    const label = byMode(moveLabel, 'BOARDS UP!', 'CARDS UP!');
     return [5, 10, 20].map(sec => `<button class="btn qt" data-act="cue" data-sec="${sec}" data-label="${esc(label)}">⏱ ${sec} s</button>`).join('');
   }
   const qtimer = '<div class="qtimer" aria-live="polite"></div>';
@@ -294,6 +296,10 @@
   }
   function boardPic(text) {
     return `<div class="boardpic"><div class="wb">${text}</div><p>Write it big. When the teacher says <b>"Boards up!"</b>, everyone raises their board.</p></div>`;
+  }
+  function cardPic(cards) {
+    return `<div class="boardpic"><div class="cardfan">${cards.map((c, i) => `<span class="acard ${i === 1 ? 'up' : ''}">${c}</span>`).join('')}</div>
+      <p>Each team has a set of answer cards (🖨 Print → <b>Answer cards</b>). When the teacher says <b>"Cards up!"</b>, raise the right card.</p></div>`;
   }
   // YES / NO warm-ups: a drop-down menu chooses the body action
   const warmAct = id => C.warmActions.find(a => a.id === (S.warmAct || {})[id]) || C.warmActions[0];
@@ -386,18 +392,18 @@
       return `<div class="how">${modeBar()}<ol class="steps">
         <li><b>Read</b> the four sentences on the screen together.</li>
         <li><b>Talk</b> in your team. Which sentence is correct? Watch the timer (5, 10 or 20 seconds).</li>
-        ${boardMode()
-          ? '<li><b>Write</b> the letter <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b> on your team board. When the time ends: <b>Boards up!</b></li>'
-          : '<li><b>Move!</b> When the time ends, the whole team walks to corner <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b>.</li>'}
+        ${byMode('<li><b>Move!</b> When the time ends, the whole team goes to corner <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b>.</li>',
+          '<li><b>Write</b> the letter <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b> on your team board. When the time ends: <b>Boards up!</b></li>',
+          '<li><b>Choose</b> your card <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b>. When the time ends: <b>Cards up!</b></li>')}
         <li>The teacher reveals the answer. Correct teams get <b>+1</b>.</li>
         <li><b>Bonus:</b> one person explains the rule → <b>+1</b> more.</li>
       </ol>
-      ${boardMode() ? boardPic('B') : `<div class="cornermap">${[0, 1, 2, 3].map(i => `<div class="cm c${i}">${LET[i]}</div>`).join('')}<div class="cm-mid">teams<br>start here</div></div>`}</div>`;
+      ${S.answerMode === 'card' ? cardPic(['A', 'B', 'C', 'D']) : boardMode() ? boardPic('B') : `<div class="cornermap">${[0, 1, 2, 3].map(i => `<div class="cm c${i}">${LET[i]}</div>`).join('')}<div class="cm-mid">teams<br>start here</div></div>`}</div>`;
     },
     play() {
       const r = S.rounds.r1, q = C.corners[r.i], rev = !!r.rev[r.i];
       return `${itemNav('r1', C.corners.length, 'Question')}
-        <div class="qcard">${qtimer}<div class="qprompt">Which sentence is correct? ${boardMode() ? '🪧 Write A, B, C or D' : '🏃 Go to corner A, B, C or D'}</div>
+        <div class="qcard">${qtimer}<div class="qprompt">Which sentence is correct? ${byMode('🏃 Go to corner A, B, C or D', '🪧 Write A, B, C or D', '🃏 Raise card A, B, C or D')}</div>
           ${optionCards(q.options, q.answer, rev)}
           ${rev ? `<div class="explain">✅ <b>${LET[q.answer]}</b> — ${esc(q.why)}</div>` : ''}
         </div>
@@ -423,7 +429,14 @@
         }).join('')}</div></div>`;
     },
     how() {
-      return boardMode()
+      return S.answerMode === 'card'
+        ? `<div class="how">${modeBar()}<ol class="steps">
+        <li>The screen shows a sentence with a <b>gap</b>.</li>
+        <li>Your team decides the missing mark: <b>. ? ! , ’</b></li>
+        <li>Find the right <b>punctuation card</b> in your set. Change the card holder every time!</li>
+        <li>When the time ends: <b>Cards up!</b> First correct card = <b>+2</b>. Other correct cards = <b>+1</b>.</li>
+      </ol>${cardPic(['.', '?', '!', ',', '’'])}</div>`
+        : boardMode()
         ? `<div class="how">${modeBar()}<ol class="steps">
         <li>The screen shows a sentence with a <b>gap</b>.</li>
         <li>Your team decides the missing mark: <b>. ? ! , ’</b></li>
@@ -443,7 +456,7 @@
       const [a, b] = q.text.split('{_}');
       const mk = C.marks.find(m => m.mark === q.answer);
       return `${itemNav('r2', C.swat.length, 'Sentence')}
-        <div class="qcard">${qtimer}<div class="qprompt">${boardMode() ? '🪧 Write the missing mark' : '🏃 Swat the missing mark'}</div><div class="sentence">${esc(a)}<span class="gap ${rev ? 'filled' : ''}">${rev ? esc(q.answer) : '&nbsp;'}</span>${esc(b)}</div>
+        <div class="qcard">${qtimer}<div class="qprompt">${byMode('🏃 Swat the missing mark', '🪧 Write the missing mark', '🃏 Raise the missing mark')}</div><div class="sentence">${esc(a)}<span class="gap ${rev ? 'filled' : ''}">${rev ? esc(q.answer) : '&nbsp;'}</span>${esc(b)}</div>
           <div class="pcards">${C.marks.map(m => `<div class="pcard ${rev ? (m.mark === q.answer ? 'right' : 'dim') : ''}"><b>${esc(m.mark)}</b><small>${esc(m.name)}</small></div>`).join('')}</div>
           ${rev ? `<div class="explain">✅ <b>${esc(mk.name)}</b> — ${esc(mk.use)}</div>` : ''}
         </div>
@@ -477,9 +490,9 @@
             ${optionCards(['✓ Correct', '✗ Wrong'], 1, false)}</div></div>
         <ol class="steps">
         <li><b>Talk</b> in your team. Watch the timer (5, 10 or 20 seconds).</li>
-        ${boardMode()
-          ? '<li><b>Write</b> the letter (<b>A</b>, <b>B</b> or <b>C</b>) on your team board. When the time ends: <b>Boards up!</b></li>'
-          : '<li><b>Move!</b> When the time ends, walk to the corner: <b>A</b>, <b>B</b> or <b>C</b>. For correct or wrong: corner <b>A = ✓ Correct</b>, corner <b>B = ✗ Wrong</b>.</li>'}
+        ${byMode('<li><b>Move!</b> When the time ends, go to the corner: <b>A</b>, <b>B</b> or <b>C</b>. For correct or wrong: corner <b>A = ✓ Correct</b>, corner <b>B = ✗ Wrong</b>.</li>',
+          '<li><b>Write</b> the letter (<b>A</b>, <b>B</b> or <b>C</b>) on your team board. When the time ends: <b>Boards up!</b></li>',
+          '<li><b>Choose</b> your card: <b>A</b>, <b>B</b> or <b>C</b> — or <b>✓</b> / <b>✗</b> for correct or wrong. When the time ends: <b>Cards up!</b></li>')}
         <li>The teacher reveals the answer. Correct teams get <b>+1</b>.</li>
         <li><b>Bonus +1:</b> say the correct sentence (for example: <i>They get up at seven.</i>).</li>
       </ol></div>`;
@@ -496,7 +509,7 @@
         sentence = `<div class="sentence">${esc(a)}<span class="gap word-gap ${rev ? 'filled' : ''}">${rev ? esc(q.options[q.answer]) : '&nbsp;'}</span>${esc(b)}</div>`;
       }
       return `${itemNav('rv', C.verbs.length, 'Question')}
-        <div class="qcard">${qtimer}<div class="qprompt">${tf ? 'Correct or wrong?' : 'Choose the correct verb.'} ${boardMode() ? '🪧 Write the letter' : '🏃 Go to the corner'}</div>
+        <div class="qcard">${qtimer}<div class="qprompt">${tf ? 'Correct or wrong?' : 'Choose the correct verb.'} ${byMode('🏃 Go to the corner', '🪧 Write the letter', tf ? '🃏 Raise ✓ or ✗' : '🃏 Raise the letter card')}</div>
           ${sentence}
           ${optionCards(opts, ans, rev)}
           ${rev ? `<div class="explain">✅ <b>${LET[ans]}</b> — ${esc(q.why)}${q.fix ? `<div class="fix">✏️ ${hl(q.fix)}</div>` : ''}</div>` : ''}
@@ -884,6 +897,7 @@
   const PRINTS = [
     ['corners', 'Corner signs A B C D (4 pages)'],
     ['marks', 'Punctuation swat cards . ? ! , ’ (5 pages)'],
+    ['cards', 'Answer cards for each team: A B C D · ✓ ✗ · . ? ! , ’ (3 pages per team)'],
     ['dict', 'Running dictation text (1 per team)'],
     ['planner', 'Paragraph planner (1 per team)'],
     ['judge', 'Judging sheets (1 per team)'],
@@ -902,6 +916,16 @@
     const cornerCol = ['#E4572E', '#1F7A8C', '#7B2CBF', '#D98E04'];
     if (keys.includes('corners')) LET.split('').forEach((l, i) => out.push(`<div class="page sign"><div class="sign-big" style="color:${cornerCol[i]}">${l}</div></div>`));
     if (keys.includes('marks')) C.marks.forEach(m => out.push(`<div class="page sign"><div class="sign-big mark">${esc(m.mark)}</div><div class="sign-name">${esc(m.name)}</div></div>`));
+    if (keys.includes('cards')) {
+      const set = ['A', 'B', 'C', 'D', '✓', '✗', '.', '?', '!', ',', '’'];
+      const sub = { '✓': 'Correct', '✗': 'Wrong', '.': 'full stop', '?': 'question mark', '!': 'exclamation mark', ',': 'comma', '’': 'apostrophe' };
+      teams.forEach(t => {
+        for (let i = 0; i < set.length; i += 4) {
+          out.push(`<div class="page cards4">${set.slice(i, i + 4).map(c => `<div class="acard-p" style="--c:${t.color}">
+            <div class="ac-big">${esc(c)}</div><div class="ac-sub">${esc(sub[c] || '')}</div><div class="ac-team">${esc(t.sym)} ${esc(t.name)}</div></div>`).join('')}</div>`);
+        }
+      });
+    }
     if (keys.includes('dict')) {
       const d = C.dictation[dictIdx];
       teams.forEach(t => out.push(`<div class="page"><div class="ph">Running Dictation · ${esc(t.name)}</div><h1>${esc(d.title)}</h1><p class="dict-print">${esc(d.text)}</p></div>`));

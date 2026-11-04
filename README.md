@@ -11,9 +11,9 @@ Students move around the room, write in teams and judge each other's paragraphs.
 | # | Round | Skill | Movement | Time |
 |---|-------|-------|----------|------|
 | – | Teams | Pairs, groups of 3 or 4, or any number of teams (handles odd numbers) | – | 3′ |
-| 1 | Capital Corners | Capital letters | Corners **or** raise your board | 6′ |
-| 2 | Punctuation Swat | `. ? ! , '` | Touch the card on the wall **or** raise your board | 6′ |
-| 3 | Verb Check | Subject–verb agreement (he / she + s) and *Correct or wrong?* | Corners **or** raise your board | 6′ |
+| 1 | Capital Corners | Capital letters | Run to the corner, write on the board **or** raise the right card | 6′ |
+| 2 | Punctuation Swat | `. ? ! , '` | Swat the card on the wall, write on the board **or** raise the right card | 6′ |
+| 3 | Verb Check | Subject–verb agreement (he / she + s) and *Correct or wrong?* | Run to the corner, write on the board **or** raise the right card | 6′ |
 | 4 | Sentence Scramble | Unscramble sentences **and questions** | A runner takes the answer to the teacher | 6′ |
 | 5 | Running Dictation | Accurate writing | Runner reads the text on the wall and tells the writer (SWAP every 2′) | 7′ |
 | 6 | Paragraph Builder | Topic, supporting and concluding sentences | Teams write a poster on the wall | 12′ |
@@ -22,7 +22,7 @@ Students move around the room, write in teams and judge each other's paragraphs.
 
 Each round has **Learn** (rules + a short warm-up — a drop-down menu picks the action: stand up / sit down, thumbs up / down, hands together / hands on your head, or clap / hands down; no jumping), **How to play** and **Play** tabs.
 
-**Answer modes:** in rounds 1–3 choose *Moving to the corners* or *Raising their boards* (mini whiteboards). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!* or *Boards up!*
+**Answer modes:** in rounds 1–3 choose *Running to the corner*, *Writing on the board* (mini whiteboards) or *Raising the right card* (print 🖨 → Answer cards: A B C D, ✓ ✗ and . ? ! , ’ for each team). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!*, *Boards up!* or *Cards up!*
 
 **Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. For each check they count the mistakes: **no mistakes = 2 stars · 1–2 mistakes = 1 · 3 or more = 0** (max 10). The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
 
@@ -31,7 +31,7 @@ Each round has **Learn** (rules + a short warm-up — a drop-down menu picks the
 ## Using it
 
 - Open the page and type your students' names, choose a grouping, then press **Make random teams**.
-- 🖨 **Printables:** corner signs, punctuation cards, dictation texts, paragraph planners, judging sheets, rules handout.
+- 🖨 **Printables:** corner signs, punctuation cards, answer cards for each team, dictation texts, paragraph planners, judging sheets, rules handout.
 - **👥 Teams** and **📊 Scores** show a full-screen view on the board: who is in each team, and the live ranking with bars. A **📊 Show scores** button also appears at the end of each round.
 - Keys: `←` `→` change item · `R` reveal the answer · `T` start/pause the timer · `S` scores · `G` teams · `F` full screen.
 - On a touch board: tap the buttons and swipe ← → to change questions. Text gets bigger on large (1920px+) boards.

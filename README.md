@@ -6,6 +6,17 @@ Students move around the room, write in teams and judge each other's paragraphs.
 **Focus:** writing sentences · simple paragraphs · capital letters · punctuation (`. ? ! , '`)
 **Language context:** present simple for everyday routines
 
+## Levels
+
+Choose the level on the Teams page. Each level has its own questions, dictation texts and model paragraph, and the Learn tabs only show the rules for that level:
+
+| Level | Focus |
+|---|---|
+| **Beginner A** | Capitals at the start, I and names · `.` and `?` · I work / she works |
+| **Beginner B** | + cities, countries and days · `!` · goes, watches, has |
+| **Beginner C** | + months and languages · commas in lists · don't / doesn't · Does …? |
+| **Beginner D** | + apostrophes (I'm, doesn't) · everything mixed · longer texts |
+
 ## Rounds
 
 | # | Round | Skill | Movement | Time |
@@ -24,7 +35,7 @@ Each round has **Learn** (rules + a short warm-up — a drop-down menu picks the
 
 **Answer modes:** in rounds 1–3 choose *Running to the corner*, *Writing on the board* (mini whiteboards) or *Raising the right card* (print 🖨 → Answer cards: A B C D, ✓ ✗ and . ? ! , ’ for each team). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!*, *Boards up!* or *Cards up!*
 
-**Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. For each check they count the mistakes: **no mistakes = 2 stars · 1–2 mistakes = 1 · 3 or more = 0** (max 10). The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
+**Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. Posters have **5 sentences** (topic + 3 details + concluding). On the judging sheet the columns are **sentences 1–5**: for each check, judges write ✓ or ✗ under every sentence, then count the ✗: **no ✗ = 2 stars · 1–2 ✗ = 1 · 3 or more = 0** (max 10). Two posters fit on each printed page. The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
 
 **Prizes:** on the Awards page the winners choose 🍩 Donut, 🍫 Chocolate, 🖊️ Pens or 🗒️ Sticky notes (edit the list in `content.js`).
 

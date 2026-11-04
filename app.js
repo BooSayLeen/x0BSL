@@ -6,6 +6,11 @@
   'use strict';
 
   const C = window.CONTENT;
+  // levels: Beginner A (easiest) → D. L() = the current level's questions and texts
+  const LVS = ['A', 'B', 'C', 'D'];
+  const L = () => C.levels[S.level] || C.levels.A;
+  const upTo = arr => arr.filter(x => !x.lv || LVS.indexOf(x.lv) <= LVS.indexOf(S.level || 'A'));
+  const levelName = () => (C.levelInfo[S.level] || C.levelInfo.A).name;
   const KEY = 'write-it-right-v2';
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -50,7 +55,7 @@
       students: Array.from({ length: 11 }, (_, i) => 'Student ' + (i + 1)),
       mode: 'pairs', nTeams: 4, teams: [], awards: {}, rounds,
       topics: {}, topicView: 0, judging: {}, judge: null, r4text: 0, r6rot: 1,
-      peek: {}, sound: true, theme: 'light', answerMode: 'move', prizes: {},
+      level: 'A', peek: {}, sound: true, theme: 'light', answerMode: 'move', prizes: {},
       warmAct: { r1: 'stand', rv: 'clap', r3: 'thumbs' }
     };
   }
@@ -263,12 +268,13 @@
         `<button class="pill ${(cur[t.id] || 0) === p ? 'on' : ''}" style="--c:${t.color}" data-act="award" data-key="${key}" data-team="${t.id}" data-pts="${p}" title="${labels && labels[p] ? esc(labels[p]) : ''}">${p ? '+' + p : '0'}</button>`).join('')}</div></div>`).join('')}
     </div>`;
   }
+  const dictText = () => L().dictation[S.r4text] || L().dictation[0];
   function roundHead(s) {
     const r = S.rounds[s.id];
     return `<div class="rhead">
       <div class="rnum">Round ${s.n}</div>
       <h1>${esc(s.title)}</h1>
-      <div class="tags"><span class="tag skill">✏️ ${esc(s.skill)}</span><span class="tag move">🏃 ${esc(s.move)}</span><span class="tag time">⏱ ~${s.mins} min${s.aim ? ' · ' + esc(s.aim) : ''}</span></div>
+      <div class="tags"><span class="tag lvl">🎯 ${esc(levelName())}</span><span class="tag skill">✏️ ${esc(s.id === 'r2' ? upTo(C.marks).map(m => m.mark === "'" ? '’' : m.mark).join('  ') : s.skill)}</span><span class="tag move">🏃 ${esc(s.move)}</span><span class="tag time">⏱ ~${s.mins} min${s.aim ? ' · ' + esc(s.aim) : ''}</span></div>
       <div class="tabs">${s.tabs.map(([id, lab], i) => `<button class="tab ${r.tab === id ? 'on' : ''}" data-act="tab" data-tab="${id}"><span>${i + 1}</span>${esc(lab)}</button>`).join('')}</div>
     </div>`;
   }
@@ -328,6 +334,7 @@
     return `<section class="hero">
         <div><h1>Write It Right! <span class="sub">A Day in the Life</span></h1>
         <p class="lead">A whole-lesson team game. Students move, write and judge — and practise <b>sentences</b>, <b>simple paragraphs</b>, <b>capital letters</b> and <b>punctuation</b> with the <b>present simple</b> and <b>daily routines</b>.</p>
+        <div class="levels">${LVS.map(l => `<button class="lvbtn ${S.level === l ? 'on' : ''}" data-act="level" data-l="${l}"><b>${esc(C.levelInfo[l].name)}</b><small>${esc(C.levelInfo[l].focus)}</small></button>`).join('')}</div>
         <p class="prizeline">🎁 Winners choose a prize: ${C.prizes.map(g => `<span>${g.e} ${esc(g.name)}</span>`).join('')}</p></div>
       </section>
       <div class="grid2">
@@ -378,11 +385,11 @@
     learn() {
       return `<div class="lesson">
         <h2>When do we use a CAPITAL letter?</h2>
-        <div class="cards">${C.capitals.map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${c.no ? '✗ ' : ''}${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
+        <div class="cards">${upTo(C.capitals).map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${c.no ? '✗ ' : ''}${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
         <h2>🏃 Warm-up: Capital or not?</h2>
         <p class="muted">The teacher says the word. Everybody does the action. Click a word to show the answer.</p>
         ${warmCtl('r1', 'Capital', 'No capital')}
-        <div class="words">${C.standUp.map((w, i) => {
+        <div class="words">${upTo(C.standUp).map((w, i) => {
           const k = 'su' + i, on = peek(k);
           const shown = on ? (w.cap ? w.w.charAt(0).toUpperCase() + w.w.slice(1) : w.w) : w.w;
           return `<button class="word ${on ? (w.cap ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(shown)}${on ? `<small>${warmTag('r1', w.cap)}</small>` : ''}</button>`;
@@ -401,8 +408,8 @@
       ${S.answerMode === 'card' ? cardPic(['A', 'B', 'C', 'D']) : boardMode() ? boardPic('B') : `<div class="cornermap">${[0, 1, 2, 3].map(i => `<div class="cm c${i}">${LET[i]}</div>`).join('')}<div class="cm-mid">teams<br>start here</div></div>`}</div>`;
     },
     play() {
-      const r = S.rounds.r1, q = C.corners[r.i], rev = !!r.rev[r.i];
-      return `${itemNav('r1', C.corners.length, 'Question')}
+      const r = S.rounds.r1, q = L().corners[r.i], rev = !!r.rev[r.i];
+      return `${itemNav('r1', L().corners.length, 'Question')}
         <div class="qcard">${qtimer}<div class="qprompt">Which sentence is correct? ${byMode('🏃 Go to corner A, B, C or D', '🪧 Write A, B, C or D', '🃏 Raise card A, B, C or D')}</div>
           ${optionCards(q.options, q.answer, rev)}
           ${rev ? `<div class="explain">✅ <b>${LET[q.answer]}</b> — ${esc(q.why)}</div>` : ''}
@@ -418,12 +425,12 @@
   V.r2 = {
     learn() {
       return `<div class="lesson"><h2>Five punctuation marks</h2>
-        <div class="cards marks">${C.marks.map(m => `<div class="rcard mk"><div class="bigmark">${esc(m.mark)}</div><h3>${esc(m.name)}</h3><p>${esc(m.use)}</p><p class="ex">${hl(m.ex)}</p></div>`).join('')}</div>
+        <div class="cards marks">${upTo(C.marks).map(m => `<div class="rcard mk"><div class="bigmark">${esc(m.mark)}</div><h3>${esc(m.name)}</h3><p>${esc(m.use)}</p><p class="ex">${hl(m.ex)}</p></div>`).join('')}</div>
         <h2>🏃 Warm-up: Body punctuation</h2>
         <p class="muted">Learn the actions. The teacher reads a sentence — the class does the action for each mark.</p>
-        <div class="actionsrow">${C.marks.map(m => `<span class="act-chip"><b>${esc(m.mark)}</b> ${esc(m.action)}</span>`).join('')}</div>
-        <div class="words">${C.bodyPunct.map((s, i) => {
-          const k = 'bp' + i, on = peek(k);
+        <div class="actionsrow">${upTo(C.marks).map(m => `<span class="act-chip"><b>${esc(m.mark)}</b> ${esc(m.action)}</span>`).join('')}</div>
+        <div class="words">${upTo(C.bodyPunct).map((x, i) => {
+          const s = x.s, k = 'bp' + i, on = peek(k);
           const plain = s.replace(/[.,?!]/g, '').replace(/'/g, "'");
           return `<button class="word wide ${on ? 'yes' : ''}" data-act="peek" data-k="${k}">${on ? hl(s) : esc(plain) + ' …'}</button>`;
         }).join('')}</div></div>`;
@@ -452,12 +459,12 @@
       </ol><p class="tip">💡 Safety: walk — no running, no pushing. A hand on the card = your answer.</p></div>`;
     },
     play() {
-      const r = S.rounds.r2, q = C.swat[r.i], rev = !!r.rev[r.i];
+      const r = S.rounds.r2, q = L().swat[r.i], rev = !!r.rev[r.i];
       const [a, b] = q.text.split('{_}');
       const mk = C.marks.find(m => m.mark === q.answer);
-      return `${itemNav('r2', C.swat.length, 'Sentence')}
+      return `${itemNav('r2', L().swat.length, 'Sentence')}
         <div class="qcard">${qtimer}<div class="qprompt">${byMode('🏃 Swat the missing mark', '🪧 Write the missing mark', '🃏 Raise the missing mark')}</div><div class="sentence">${esc(a)}<span class="gap ${rev ? 'filled' : ''}">${rev ? esc(q.answer) : '&nbsp;'}</span>${esc(b)}</div>
-          <div class="pcards">${C.marks.map(m => `<div class="pcard ${rev ? (m.mark === q.answer ? 'right' : 'dim') : ''}"><b>${esc(m.mark)}</b><small>${esc(m.name)}</small></div>`).join('')}</div>
+          <div class="pcards">${upTo(C.marks).map(m => `<div class="pcard ${rev ? (m.mark === q.answer ? 'right' : 'dim') : ''}"><b>${esc(m.mark)}</b><small>${esc(m.name)}</small></div>`).join('')}</div>
           ${rev ? `<div class="explain">✅ <b>${esc(mk.name)}</b> — ${esc(mk.use)}</div>` : ''}
         </div>
         <div class="actions">${quickTimers('SWAT!')}
@@ -473,7 +480,7 @@
       return `<div class="lesson"><h2>Subject + verb: do we add <span class="hc">-s</span>?</h2>
         <div class="svtable"><div class="sv no-s"><b>I · you · we · they</b><span>my friends · my mother and I</span><em>work · go · watch · have</em></div>
           <div class="sv yes-s"><b>he · she · it</b><span>Omar · my sister · the bus</span><em>work<u>s</u> · go<u>es</u> · watch<u>es</u> · ha<u>s</u></em></div></div>
-        <div class="cards">${C.agreement.map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
+        <div class="cards">${upTo(C.agreement).map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
         <h2>🏃 Warm-up: -s or no -s?</h2>
         <p class="muted">The teacher says the subject and the verb. Everybody does the action. Click to check.</p>
         ${warmCtl('rv', 'Needs -s', 'No -s')}
@@ -498,7 +505,7 @@
       </ol></div>`;
     },
     play() {
-      const r = S.rounds.rv, q = C.verbs[r.i], rev = !!r.rev[r.i];
+      const r = S.rounds.rv, q = L().verbs[r.i], rev = !!r.rev[r.i];
       const tf = q.type === 'tf';
       const opts = tf ? ['✓ Correct', '✗ Wrong'] : q.options;
       const ans = tf ? (q.ok ? 0 : 1) : q.answer;
@@ -508,7 +515,7 @@
         const [a, b] = q.text.split('___');
         sentence = `<div class="sentence">${esc(a)}<span class="gap word-gap ${rev ? 'filled' : ''}">${rev ? esc(q.options[q.answer]) : '&nbsp;'}</span>${esc(b)}</div>`;
       }
-      return `${itemNav('rv', C.verbs.length, 'Question')}
+      return `${itemNav('rv', L().verbs.length, 'Question')}
         <div class="qcard">${qtimer}<div class="qprompt">${tf ? 'Correct or wrong?' : 'Choose the correct verb.'} ${byMode('🏃 Go to the corner', '🪧 Write the letter', tf ? '🃏 Raise ✓ or ✗' : '🃏 Raise the letter card')}</div>
           ${sentence}
           ${optionCards(opts, ans, rev)}
@@ -548,12 +555,12 @@
       </ol><p class="tip">💡 Watch the verb: he / she + <b>s</b> (gets, goes, studies). Questions: <b>Do / Does / Where / What time</b> … + <b>?</b></p></div>`;
     },
     play() {
-      const r = S.rounds.r3, q = C.scramble[r.i], rev = !!r.rev[r.i];
+      const r = S.rounds.r3, q = L().scramble[r.i], rev = !!r.rev[r.i];
       const words = q.words.split(' ');
       let mixed = seededShuffle(words, r.i + 3);
       if (mixed.join(' ') === words.join(' ')) mixed = mixed.slice(1).concat(mixed[0]);
       const isQ = q.answer.trim().endsWith('?');
-      return `${itemNav('r3', C.scramble.length, 'Item')}
+      return `${itemNav('r3', L().scramble.length, 'Item')}
         <div class="qcard">${qtimer}<div class="qprompt"><span class="kind ${isQ ? 'q' : ''}">${isQ ? '❓ Make a question' : '✏️ Make a sentence'}</span></div><div class="tiles">${mixed.map((w, i) => `<span class="tile" style="--d:${i * 60}ms">${esc(w)}</span>`).join('')}</div>
           ${rev ? `<div class="answer">${hl(q.answer)}</div>
             <div class="checks"><span>✓ word order</span><span>✓ <b class="hc">C</b>apitals</span><span>✓ punctuation <b class="hp">. , ? ! ’</b></span></div>` : ''}
@@ -581,12 +588,12 @@
           <li>When you hear <b>SWAP!</b> change roles.</li>
         </ul></div>
         <div><h2>Choose the text</h2>
-        <div class="choice">${C.dictation.map((d, i) => `<button class="opt ${S.r4text === i ? 'on' : ''}" data-act="r4text" data-i="${i}"><b>${esc(d.title)}</b><small>${esc(d.level)} · ${d.text.split(/\s+/).length} words</small></button>`).join('')}</div>
+        <div class="choice">${L().dictation.map((d, i) => `<button class="opt ${S.r4text === i ? 'on' : ''}" data-act="r4text" data-i="${i}"><b>${esc(d.title)}</b><small>${esc(d.level)} · ${d.text.split(/\s+/).length} words</small></button>`).join('')}</div>
         <p class="muted">Print one copy per team (🖨 → Running dictation) and pin them far from the teams.</p></div>
       </div></div>`;
     },
     play() {
-      const d = C.dictation[S.r4text];
+      const d = dictText();
       return `<div class="center">
         <div class="bigtitle">🏃 ${esc(d.title)}</div>
         <p class="lead">Runners: go to the wall! Writers: get ready to write.</p>
@@ -597,7 +604,7 @@
         <p class="muted">The text is NOT on the screen. It shows in the next tab (Check).</p></div>`;
     },
     check() {
-      const d = C.dictation[S.r4text], on = peek('r4show');
+      const d = dictText(), on = peek('r4show');
       const table = [['0–1', 5], ['2–3', 4], ['4–5', 3], ['6–7', 2], ['8–9', 1], ['10+', 0]];
       return `<div class="lesson">
         <ol class="steps small">
@@ -615,7 +622,7 @@
   /* ----- Round 5 */
   V.r5 = {
     learn() {
-      const m = C.model, on = peek('modelHl');
+      const m = L().model, on = peek('modelHl');
       const sent = s => on ? hl(s) : esc(s);
       return `<div class="lesson"><div class="grid2">
         <div><h2>A paragraph is like a burger 🍔</h2>
@@ -712,8 +719,8 @@
         <div><h2>How to judge a poster</h2>
           <ol class="steps small">
             <li><b>Read</b> the poster out loud together.</li>
-            <li><b>Check one thing at a time</b> — the 5 checks below. They are the things you practised in the game.</li>
-            <li><b>Count the mistakes</b> for each check and give stars: <b>no mistakes = 2</b> · <b>1–2 mistakes = 1</b> · <b>3 or more = 0</b>.</li>
+            <li><b>Check one thing at a time</b> — the 5 checks below. For each check, write <b>✓</b> or <b>✗</b> under sentences <b>1 2 3 4 5</b> on the judging sheet.</li>
+            <li><b>Count the ✗</b> and give stars: <b>no ✗ = 2</b> · <b>1–2 ✗ = 1</b> · <b>3 or more ✗ = 0</b>.</li>
             <li><b>Write</b> one ⭐ good thing and one 🔧 thing to fix.</li>
           </ol>
           <h2>The 5 checks</h2>${rubricList()}
@@ -854,6 +861,7 @@
     const st = stage();
     document.documentElement.dataset.theme = S.theme;
     $('#b-sound').textContent = S.sound ? '🔊' : '🔇';
+    $('.brand-txt small').textContent = levelName() + ' · A Day in the Life';
     $('#stepper').innerHTML = STAGES.map((s, i) => `<button class="step ${i === S.stage ? 'on' : ''} ${i < S.stage ? 'past' : ''}" data-act="go" data-i="${i}" title="${esc(s.short)}"><span>${s.n || (i === 0 ? '👥' : '🏆')}</span><em>${esc(s.short)}</em></button>`).join('');
 
     let html;
@@ -907,48 +915,59 @@
     return `<h2>🖨 Printables</h2>
       <p class="muted">${S.teams.length ? S.teams.length + ' teams — sheets are made for each team.' : 'Make teams first to print one sheet per team.'}</p>
       <div class="plist">${PRINTS.map(([k, l]) => `<label><input type="checkbox" name="pr" value="${k}" checked> ${esc(l)}</label>`).join('')}</div>
-      <label class="inline">Dictation text: <select id="pr-dict">${C.dictation.map((d, i) => `<option value="${i}" ${i === S.r4text ? 'selected' : ''}>${esc(d.title)} (${esc(d.level)})</option>`).join('')}</select></label>
+      <label class="inline">Dictation text: <select id="pr-dict">${L().dictation.map((d, i) => `<option value="${i}" ${i === S.r4text ? 'selected' : ''}>${esc(d.title)} (${esc(d.level)})</option>`).join('')}</select></label>
       <div class="actions"><button class="btn big primary" data-act="doPrint">Print selected</button></div>`;
   }
+  // low marks (. ,) sit on the baseline and high marks (’ ') near the top: nudge them to the middle of the card
+  const markPos = c => ['.', ','].includes(c) ? 'lowmark' : ["'", '’'].includes(c) ? 'highmark' : '';
   function buildPrint(keys, dictIdx) {
     const teams = S.teams.length ? S.teams : [{ name: '________', sym: '', color: '#333', id: 'x' }];
     const out = [];
     const cornerCol = ['#E4572E', '#1F7A8C', '#7B2CBF', '#D98E04'];
     if (keys.includes('corners')) LET.split('').forEach((l, i) => out.push(`<div class="page sign"><div class="sign-big" style="color:${cornerCol[i]}">${l}</div></div>`));
-    if (keys.includes('marks')) C.marks.forEach(m => out.push(`<div class="page sign"><div class="sign-big mark">${esc(m.mark)}</div><div class="sign-name">${esc(m.name)}</div></div>`));
+    if (keys.includes('marks')) C.marks.forEach(m => out.push(`<div class="page sign"><div class="sign-big mark ${markPos(m.mark)}">${esc(m.mark)}</div><div class="sign-name">${esc(m.name)}</div></div>`));
     if (keys.includes('cards')) {
       const set = ['A', 'B', 'C', 'D', '✓', '✗', '.', '?', '!', ',', '’'];
       const sub = { '✓': 'Correct', '✗': 'Wrong', '.': 'full stop', '?': 'question mark', '!': 'exclamation mark', ',': 'comma', '’': 'apostrophe' };
       teams.forEach(t => {
         for (let i = 0; i < set.length; i += 4) {
           out.push(`<div class="page cards4">${set.slice(i, i + 4).map(c => `<div class="acard-p" style="--c:${t.color}">
-            <div class="ac-big">${esc(c)}</div><div class="ac-sub">${esc(sub[c] || '')}</div><div class="ac-team">${esc(t.sym)} ${esc(t.name)}</div></div>`).join('')}</div>`);
+            <div class="ac-big ${markPos(c)}">${esc(c)}</div><div class="ac-sub">${esc(sub[c] || '')}</div><div class="ac-team">${esc(t.sym)} ${esc(t.name)}</div></div>`).join('')}</div>`);
         }
       });
     }
     if (keys.includes('dict')) {
-      const d = C.dictation[dictIdx];
+      const d = L().dictation[dictIdx] || L().dictation[0];
       teams.forEach(t => out.push(`<div class="page"><div class="ph">Running Dictation · ${esc(t.name)}</div><h1>${esc(d.title)}</h1><p class="dict-print">${esc(d.text)}</p></div>`));
     }
     if (keys.includes('planner')) teams.forEach(t => {
       const tp = S.topics[t.id] != null ? C.topics[S.topics[t.id]].name : '______________________';
       out.push(`<div class="page"><div class="ph">Paragraph Planner · Team: ${esc(t.name)}</div><h1>Topic: ${esc(tp)}</h1>
-        <div class="pl"><b>🍞 Topic sentence</b><div class="ln"></div><div class="ln"></div></div>
-        ${[1, 2, 3, 4].map(i => `<div class="pl"><b>🥬 Supporting sentence ${i}</b><div class="ln"></div><div class="ln"></div></div>`).join('')}
-        <div class="pl"><b>🍞 Concluding sentence</b><div class="ln"></div><div class="ln"></div></div>
+        <div class="pl"><b>🍞 Sentence 1 · topic sentence</b><div class="ln"></div><div class="ln"></div></div>
+        ${[2, 3, 4].map(i => `<div class="pl"><b>🥬 Sentence ${i} · detail</b><div class="ln"></div><div class="ln"></div></div>`).join('')}
+        <div class="pl"><b>🍞 Sentence 5 · concluding sentence</b><div class="ln"></div><div class="ln"></div></div>
         <div class="pchk">${C.rubric.map(c => `<span>☐ ${esc(c.title)}</span>`).join('')}</div>
         <div class="pchk">${C.missions.map(m => `<span>⭐ ${esc(m)}</span>`).join('')}</div></div>`);
     });
     if (keys.includes('judge')) teams.forEach(t => {
+      // one block per poster, 2 posters per page · columns = sentences 1–5
       const others = S.teams.length ? S.teams.filter(o => o.id !== t.id) : [1, 2, 3, 4].map(i => ({ name: 'Team ' + i }));
-      out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)}</div>
-        <div class="jhow"><b>How to judge:</b> ① Read the poster together. ② Do one check at a time. ③ Count the mistakes and <b>circle</b> the stars. ④ Write one ⭐ and one 🔧.</div>
-        <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
-        <table class="jt-print"><tr><th>Check</th>${others.map(o => `<th>${esc(o.name)}</th>`).join('')}</tr>
-        ${C.rubric.map((c, i) => `<tr><td><b>${i + 1}. ${esc(c.title)}</b><br><small>🔎 ${esc(c.check)}</small></td>${others.map(() => '<td class="st">😃 2<br>🙂 1<br>😟 0</td>').join('')}</tr>`).join('')}
-        <tr class="tot"><td><b>TOTAL /${C.maxStars}</b></td>${others.map(() => '<td></td>').join('')}</tr>
-        <tr class="fb"><td><b>⭐ One good thing</b></td>${others.map(() => '<td></td>').join('')}</tr>
-        <tr class="fb"><td><b>🔧 One thing to fix</b></td>${others.map(() => '<td></td>').join('')}</tr></table></div>`);
+      const nS = C.sentences || 5;
+      const hint = ['topic', 'detail', 'detail', 'detail', 'end'];
+      const block = o => `<div class="jblock"><div class="jb-h">Poster: <b>${esc(o.name)}</b></div>
+        <table class="jt-print"><tr><th class="ck">Check</th>${Array.from({ length: nS }, (_, k) => `<th class="sn">${k + 1}</th>`).join('')}<th class="nx">✗</th><th class="sx">Stars</th></tr>
+        ${C.rubric.map((c, i) => `<tr><td class="ck"><b>${i + 1}. ${esc(c.title)}</b></td>${Array.from({ length: nS }, (_, k) =>
+          `<td class="tick">${i === C.rubric.length - 1 ? `<small>${hint[k] || ''}</small>` : ''}</td>`).join('')}<td class="nx"></td><td class="sx">0 · 1 · 2</td></tr>`).join('')}
+        <tr class="tot"><td class="ck"><b>TOTAL stars /${C.maxStars}</b></td><td colspan="${nS + 2}"></td></tr>
+        <tr class="fb"><td class="ck"><b>⭐ One good thing</b></td><td colspan="${nS + 2}"></td></tr>
+        <tr class="fb"><td class="ck"><b>🔧 One thing to fix</b></td><td colspan="${nS + 2}"></td></tr></table></div>`;
+      for (let k = 0; k < others.length; k += 2) {
+        out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)} · ${esc(levelName())}</div>
+          <div class="jhow"><b>How to judge:</b> ① Read the 5 sentences together. ② For each check, write <b>✓</b> or <b>✗</b> under sentences 1–5. ③ Count the <b>✗</b> and circle the stars. ④ Write one ⭐ and one 🔧.</div>
+          <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+          <ol class="jchecks">${C.rubric.map(c => `<li><b>${esc(c.title)}:</b> ${esc(c.check)}</li>`).join('')}</ol>
+          ${others.slice(k, k + 2).map(block).join('')}</div>`);
+      }
     });
     if (keys.includes('handout')) out.push(`<div class="page handout"><h1>Write It Right! · Rules</h1>${rulesHtml()}</div>`);
     return out.join('');
@@ -962,7 +981,7 @@
     prev() { const r = S.rounds[stage().id]; if (r && r.i > 0) r.i--; },
     next() {
       const id = stage().id, r = S.rounds[id];
-      const n = { r1: C.corners.length, r2: C.swat.length, rv: C.verbs.length, r3: C.scramble.length }[id];
+      const n = { r1: L().corners.length, r2: L().swat.length, rv: L().verbs.length, r3: L().scramble.length }[id];
       if (r && n && r.i < n - 1) r.i++;
     },
     reveal() {
@@ -987,6 +1006,12 @@
       return false;
     },
     r4text(d) { S.r4text = +d.i; },
+    level(d) {
+      if (S.level === d.l) return false;
+      S.level = d.l; S.r4text = 0; S.peek = {};
+      ['r1', 'r2', 'rv', 'r3'].forEach(id => { S.rounds[id].i = 0; S.rounds[id].rev = {}; });
+      sfx.reveal();
+    },
     topicView(d) { S.topicView = +d.i; },
     topicCycle(d) {
       const used = new Set(Object.entries(S.topics).filter(([k]) => k !== d.team).map(([, v]) => v));

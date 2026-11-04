@@ -20,7 +20,7 @@ Students move around the room, write in teams and judge each other's paragraphs.
 | 7 | Judges' Walk | Peer judging: 5 checks linked to the rounds | Gallery walk, rotating clockwise (2′ per poster) | 10′ |
 | 🏆 | Awards | Podium, Best Paragraph, Sharp-Eye Judges, prizes, exit ticket | – | 4′ |
 
-Each round has **Learn** (rules + a short warm-up — standing/sitting, clapping and simple gestures, no jumping), **How to play** and **Play** tabs.
+Each round has **Learn** (rules + a short warm-up — a drop-down menu picks the action: stand up / sit down, thumbs up / down, hands together / hands on your head, or clap / hands down; no jumping), **How to play** and **Play** tabs.
 
 **Answer modes:** in rounds 1–3 choose *Moving to the corners* or *Raising their boards* (mini whiteboards). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!* or *Boards up!*
 

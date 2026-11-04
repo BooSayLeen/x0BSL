@@ -50,7 +50,8 @@
       students: Array.from({ length: 11 }, (_, i) => 'Student ' + (i + 1)),
       mode: 'pairs', nTeams: 4, teams: [], awards: {}, rounds,
       topics: {}, topicView: 0, judging: {}, judge: null, r4text: 0, r6rot: 1,
-      peek: {}, sound: true, theme: 'light', answerMode: 'move', prizes: {}
+      peek: {}, sound: true, theme: 'light', answerMode: 'move', prizes: {},
+      warmAct: { r1: 'stand', rv: 'clap', r3: 'thumbs' }
     };
   }
   function load() {
@@ -294,6 +295,15 @@
   function boardPic(text) {
     return `<div class="boardpic"><div class="wb">${text}</div><p>Write it big. When the teacher says <b>"Boards up!"</b>, everyone raises their board.</p></div>`;
   }
+  // YES / NO warm-ups: a drop-down menu chooses the body action
+  const warmAct = id => C.warmActions.find(a => a.id === (S.warmAct || {})[id]) || C.warmActions[0];
+  function warmCtl(id, yesLabel, noLabel) {
+    const a = warmAct(id);
+    return `<div class="warmctl"><label>Action: <select class="warmsel" data-round="${id}">${C.warmActions.map(x =>
+        `<option value="${x.id}" ${x.id === a.id ? 'selected' : ''}>${esc(x.yes.e + ' ' + x.name + ' ' + x.no.e)}</option>`).join('')}</select></label>
+      <div class="warmrule"><span class="wy"><b>${yesLabel}</b> → ${a.yes.e} ${esc(a.yes.t)}</span><span class="wn"><b>${noLabel}</b> → ${a.no.e} ${esc(a.no.t)}</span></div></div>`;
+  }
+  const warmTag = (id, yes) => { const a = warmAct(id), x = yes ? a.yes : a.no; return x.e + ' ' + esc(x.t); };
   function nextStageBtn() {
     const nx = STAGES[S.stage + 1];
     const sc = S.teams.length && S.stage > 0 ? `<button class="btn big" data-act="board" data-v="scores">📊 Show scores</button>` : '';
@@ -363,12 +373,13 @@
       return `<div class="lesson">
         <h2>When do we use a CAPITAL letter?</h2>
         <div class="cards">${C.capitals.map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${c.no ? '✗ ' : ''}${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
-        <h2>🏃 Warm-up: Stand up / Sit down</h2>
-        <p class="muted">Everybody stands. Say the word. <b>Capital?</b> → stay standing. <b>No capital?</b> → sit down. Click a word to show the answer.</p>
+        <h2>🏃 Warm-up: Capital or not?</h2>
+        <p class="muted">The teacher says the word. Everybody does the action. Click a word to show the answer.</p>
+        ${warmCtl('r1', 'Capital', 'No capital')}
         <div class="words">${C.standUp.map((w, i) => {
           const k = 'su' + i, on = peek(k);
           const shown = on ? (w.cap ? w.w.charAt(0).toUpperCase() + w.w.slice(1) : w.w) : w.w;
-          return `<button class="word ${on ? (w.cap ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(shown)}${on ? `<small>${w.cap ? '⬆ stand' : '⬇ sit'}</small>` : ''}</button>`;
+          return `<button class="word ${on ? (w.cap ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(shown)}${on ? `<small>${warmTag('r1', w.cap)}</small>` : ''}</button>`;
         }).join('')}</div></div>`;
     },
     how() {
@@ -450,11 +461,12 @@
         <div class="svtable"><div class="sv no-s"><b>I · you · we · they</b><span>my friends · my mother and I</span><em>work · go · watch · have</em></div>
           <div class="sv yes-s"><b>he · she · it</b><span>Omar · my sister · the bus</span><em>work<u>s</u> · go<u>es</u> · watch<u>es</u> · ha<u>s</u></em></div></div>
         <div class="cards">${C.agreement.map(c => `<div class="rcard ${c.no ? 'no' : ''}"><h3>${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
-        <h2>👏 Warm-up: Clap for -s</h2>
-        <p class="muted">The teacher says the subject and the verb. Verb needs <b>-s</b>? → <b>clap once</b> 👏. No -s? → hands down. Click to check.</p>
+        <h2>🏃 Warm-up: -s or no -s?</h2>
+        <p class="muted">The teacher says the subject and the verb. Everybody does the action. Click to check.</p>
+        ${warmCtl('rv', 'Needs -s', 'No -s')}
         <div class="words">${C.clapS.map((x, i) => {
           const k = 'cs' + i, on = peek(k);
-          return `<button class="word wide ${on ? (x.s ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(x.w)}${on ? `<small>${x.s ? '👏 clap — ' : '✋ no clap — '}${esc(x.a)}</small>` : ''}</button>`;
+          return `<button class="word wide ${on ? (x.s ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(x.w)}${on ? `<small>${warmTag('rv', x.s)} — ${esc(x.a)}</small>` : ''}</button>`;
         }).join('')}</div></div>`;
     },
     how() {
@@ -507,10 +519,11 @@
         <h2>Present simple for routines</h2>
         <div class="cards">${C.presentSimple.map(c => `<div class="rcard"><h3>${esc(c.title)}</h3><p>${c.ex}</p></div>`).join('')}</div>
         <h2>🏃 Warm-up: Sentence or not?</h2>
-        <p class="muted">Sentence → thumbs up 👍 and stand. Not a sentence → thumbs down 👎 and sit. Click to check.</p>
+        <p class="muted">The teacher reads it. Everybody does the action. Click to check.</p>
+        ${warmCtl('r3', 'Sentence', 'Not a sentence')}
         <div class="words">${C.sentenceOrNot.map((x, i) => {
           const k = 'sn' + i, on = peek(k);
-          return `<button class="word wide ${on ? (x.ok ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(x.s)}${on ? `<small>${x.ok ? '👍 ' : '👎 '}${esc(x.why)}</small>` : ''}</button>`;
+          return `<button class="word wide ${on ? (x.ok ? 'yes' : 'nope') : ''}" data-act="peek" data-k="${k}">${esc(x.s)}${on ? `<small>${warmTag('r3', x.ok)} — ${esc(x.why)}</small>` : ''}</button>`;
         }).join('')}</div></div>`;
     },
     how() {
@@ -1039,6 +1052,8 @@
       S.nTeams = Math.max(2, Math.min(8, +e.target.value || 2)); readNames(); render();
     } else if (e.target.id === 'names') {
       readNames(); render();
+    } else if (e.target.classList.contains('warmsel')) {
+      S.warmAct = Object.assign({}, S.warmAct, { [e.target.dataset.round]: e.target.value }); render();
     } else if (e.target.id === 't-preset') {
       timerSet(+e.target.value);
     }

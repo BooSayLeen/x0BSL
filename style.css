@@ -385,6 +385,14 @@ table.res .pts { font-weight: 800; font-size: 1.2rem; color: var(--good); }
   .gift { min-width: 72px; }
 }
 
+.warmctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 0 0 14px; }
+.warmctl label { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.warmsel { font-size: 1rem; padding: .45em .7em; border-radius: 12px; border-width: 3px; border-color: var(--accent); }
+.warmrule { display: flex; flex-wrap: wrap; gap: 10px; }
+.warmrule span { border-radius: 999px; padding: .3em 1em; font-size: 1.1rem; }
+.warmrule .wy { background: var(--bg); background: color-mix(in srgb, var(--good) 15%, var(--panel)); }
+.warmrule .wn { background: var(--bg); background: color-mix(in srgb, var(--bad) 12%, var(--panel)); }
+
 /* ---------- board views: teams + leaderboard ---------- */
 .board-btn span { display: none; }
 .boardview { position: fixed; inset: 0; z-index: 45; background: var(--bg); display: none; overflow: auto; cursor: pointer; padding: max(24px, env(safe-area-inset-top)) 24px 24px; }

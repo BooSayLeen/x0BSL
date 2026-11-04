@@ -20,8 +20,8 @@ window.CONTENT = {
     { mark: '.', name: 'full stop', use: 'At the end of a normal sentence.', ex: 'I get up at seven.', action: 'Tap the table once' },
     { mark: '?', name: 'question mark', use: 'At the end of a question.', ex: 'What time do you get up?', action: 'Shrug your shoulders' },
     { mark: '!', name: 'exclamation mark', use: 'For strong feelings: surprise, happy, angry.', ex: 'What a busy day!', action: 'Clap once' },
-    { mark: ',', name: 'comma', use: 'Between things in a list (no comma before "and").', ex: 'I wash, cook and clean.', action: 'Raise one hand' },
-    { mark: "'", name: 'apostrophe', use: 'Shows missing letters: I\'m = I am, don\'t = do not.', ex: 'She doesn\'t work on Friday.', action: 'Draw it in the air' }
+    { mark: ',', name: 'comma', use: 'Between things in a list (no comma before "and").', ex: 'I wash, cook and clean.', action: 'Hands silent (still)' },
+    { mark: "'", name: 'apostrophe', use: 'Shows missing letters: I\'m = I am, don\'t = do not.', ex: 'She doesn\'t work on Friday.', action: 'Put your hands up' }
   ],
 
   presentSimple: [
@@ -66,6 +66,14 @@ window.CONTENT = {
     { options: ['Mr. Khan teaches maths in the morning.', 'mr. Khan teaches maths in the morning.', 'Mr. khan teaches maths in the morning.', 'Mr. Khan Teaches Maths in the Morning.'], answer: 0, why: 'Titles and names: Mr. Khan. "maths" and "morning" are small.' },
     { options: ['We visit our Family in July.', 'We visit our family in July.', 'We visit our family in july.', 'we visit our family in July.'], answer: 1, why: 'Months need a capital: July. "family" is a normal word.' },
     { options: ['my mother cooks dinner every evening.', 'My mother cooks Dinner every evening.', 'My Mother cooks dinner every Evening.', 'My mother cooks dinner every evening.'], answer: 3, why: 'Only the first word needs a capital here.' }
+  ],
+
+  /* Warm-up actions for the YES / NO warm-ups (the teacher picks one from a drop-down menu) */
+  warmActions: [
+    { id: 'stand', name: 'Stand up / Sit down', yes: { e: '⬆️', t: 'Stand up' }, no: { e: '⬇️', t: 'Sit down' } },
+    { id: 'thumbs', name: 'Thumbs up / Thumbs down', yes: { e: '👍', t: 'Thumbs up' }, no: { e: '👎', t: 'Thumbs down' } },
+    { id: 'hands', name: 'Hands together / Hands on your head', yes: { e: '🙏', t: 'Hands together (praying)' }, no: { e: '🙆', t: 'Hands on your head' } },
+    { id: 'clap', name: 'Clap once / Hands down', yes: { e: '👏', t: 'Clap once' }, no: { e: '✋', t: 'Hands down' } }
   ],
 
   /* Round 1 warm-up: Stand up (capital) / Sit down (no capital) */

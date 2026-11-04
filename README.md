@@ -35,7 +35,7 @@ Each round has **Learn** (rules + a short warm-up — a drop-down menu picks the
 
 **Answer modes:** in rounds 1–3 choose *Running to the corner*, *Writing on the board* (mini whiteboards) or *Raising the right card* (print 🖨 → Answer cards: A B C D, ✓ ✗ and . ? ! , ’ for each team). Quick **5 / 10 / 20 s** timers count down on the question, then show *Go to your corner!*, *Boards up!* or *Cards up!*
 
-**Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. Posters have **5 sentences** (topic + 3 details + concluding). The judging sheet has columns **Group 1 – Group 6** with an empty line where students write the group names. For each check they count the mistakes in the 5 sentences and circle the stars: **no mistakes = 2 · 1–2 mistakes = 1 · 3 or more = 0** (max 10). The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
+**Judging:** teams check 5 things they practised in the game — capital letters, end marks, commas and apostrophes, verbs (he / she + s) and paragraph shape. Posters have **5 sentences** (topic + 3 details + concluding). The judging sheet lists the 5 checks (with how to check) under **Check**; columns **1–6** are the groups, with a line under each number for the group's name. For each check they count the mistakes in the 5 sentences and circle the stars: **no mistakes = 2 · 1–2 mistakes = 1 · 3 or more = 0** (max 10). The teacher can judge too; teams whose stars are close to the teacher's earn **Sharp-Eye** bonus points.
 
 **Prizes:** on the Awards page the winners choose 🍩 Donut, 🍫 Chocolate, 🖊️ Pens or 🗒️ Sticky notes (edit the list in `content.js`).
 

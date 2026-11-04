@@ -953,11 +953,10 @@
       // one page per team · columns = Group 1–6 with an empty line: students write the group names
       const G = 6;
       out.push(`<div class="page"><div class="ph">Judging Sheet · Our team: ${esc(t.name)} · ${esc(levelName())}</div>
-        <div class="jhow"><b>How to judge:</b> ① Write the group names at the top. ② Read each poster (5 sentences) together. ③ For each check, count the mistakes and <b>circle</b> the stars. ④ Write one ⭐ and one 🔧. Do not judge your own group.</div>
+        <div class="jhow"><b>How to judge:</b> ① Columns 1–6 are the groups: write each group's name under its number. ② Read each poster (5 sentences) together. ③ For each check, count the mistakes and <b>circle</b> the stars. ④ Write one ⭐ and one 🔧. Do not judge your own group.</div>
         <div class="jkey">${C.scale.map(x => `<span>${esc(x)}</span>`).join('')}</div>
-        <ol class="jchecks">${C.rubric.map(c => `<li><b>${esc(c.title)}:</b> ${esc(c.check)}</li>`).join('')}</ol>
-        <table class="jt-print groups"><tr><th class="ck">Check</th>${Array.from({ length: G }, (_, k) => `<th class="gname"><span>Group ${k + 1}</span><div class="nameline"></div></th>`).join('')}</tr>
-        ${C.rubric.map((c, i) => `<tr><td class="ck"><b>${i + 1}. ${esc(c.title)}</b></td>${Array.from({ length: G }, () => '<td class="st">😃 2<br>🙂 1<br>😟 0</td>').join('')}</tr>`).join('')}
+        <table class="jt-print groups"><tr><th class="ck">Check</th>${Array.from({ length: G }, (_, k) => `<th class="gname"><span>${k + 1}</span><div class="nameline"></div></th>`).join('')}</tr>
+        ${C.rubric.map((c, i) => `<tr><td class="ck"><b>${i + 1}. ${esc(c.title)}</b><small>🔎 ${esc(c.check)}</small></td>${Array.from({ length: G }, () => '<td class="st">😃 2<br>🙂 1<br>😟 0</td>').join('')}</tr>`).join('')}
         <tr class="tot"><td class="ck"><b>TOTAL /${C.maxStars}</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr>
         <tr class="fb"><td class="ck"><b>⭐ One good thing</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr>
         <tr class="fb"><td class="ck"><b>🔧 One thing to fix</b></td>${Array.from({ length: G }, () => '<td></td>').join('')}</tr></table></div>`);

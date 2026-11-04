@@ -37,6 +37,6 @@ stars are close to the teacher's earn **Sharp-Eye** bonus points, so teams are r
 ## Publish on GitHub Pages
 
 1. In the repository, go to **Settings → Pages**. Under *Build and deployment*, choose **Deploy from a branch**, then pick `main` and `/ (root)`.
-2. The game will be at `https://boosayleen.github.io/x0BSL/`.
+2. The game will be at `https://im3a797.github.io/x0BSL/`.
 
 There is no build step. The site is plain HTML, CSS and JavaScript.

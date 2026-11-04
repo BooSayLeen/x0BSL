@@ -580,7 +580,9 @@ table.res .pts { font-weight: 800; font-size: 1.2rem; color: var(--good); }
   .jt-print.groups td.ck small { display: block; font-size: 8.5pt; color: #444; margin-top: 1mm; }
   .jt-print.groups th.gname { font-size: 10pt; text-align: center; }
   .jt-print.groups th.gname span { display: block; font-size: 16pt; }
-  .nameline { border-bottom: 1.5px solid #333; height: 9mm; margin: 0 2px; }
+  .nameline { height: 14mm; }
+  .ourgroup { font-size: 13pt; font-weight: 600; margin-bottom: 4mm; display: flex; gap: 3mm; align-items: flex-end; }
+  .ourgroup span { display: inline-block; width: 80mm; border-bottom: 1.5px solid #333; height: 7mm; }
   .jt-print.groups td.st { height: 19mm; font-size: 11pt; line-height: 1.45; text-align: center; vertical-align: middle; }
   .jt-print.groups tr.fb td { height: 18mm; }
   .jt-print.groups tr.tot td { height: 10mm; }
